@@ -15,12 +15,19 @@ gradlew
 gradle.properties
 gradlew.bat
 
+app/build
 app/libs
 app/src/test/
 app/src/androidTest/
 
 # Signing files
 .signing/
+
+#Skill-Branch
+/captures
+/projectFilesBackup
+.externalNativeBuild
+.cxx
 
 # User-specific configurations
 .idea/
