@@ -40,5 +40,11 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <ru.skillbranch.skillarticles.ui.custom.Bottombar
+        android:id="@+id/bottombar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
