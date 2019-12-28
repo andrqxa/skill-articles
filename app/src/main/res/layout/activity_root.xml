@@ -44,7 +44,9 @@
         android:id="@+id/bottombar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        android:elevation="4dp"
+        android:theme="@style/ArticleBarsTheme" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

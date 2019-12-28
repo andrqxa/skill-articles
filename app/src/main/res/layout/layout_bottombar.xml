@@ -32,6 +32,8 @@
         android:src="@drawable/ic_share_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_bookmark"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ru.skillbranch.skillarticles.ui.custom.behaviors.CheckableImageView
