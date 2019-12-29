@@ -5,9 +5,14 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewAnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import com.google.android.material.shape.MaterialShapeDrawable
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.extensions.dpToPx
+import kotlin.math.hypot
 
 class ArticleSubmenu @JvmOverloads constructor(
     context: Context,
@@ -15,8 +20,8 @@ class ArticleSubmenu @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
     var isOpen = false
-//    private var centerX: Float = context.dpToPx(200)
-//    private var centerY: Float = context.dpToPx(96)
+    private var centerX: Float = context.dpToPx(200)
+    private var centerY: Float = context.dpToPx(96)
 
     init {
         View.inflate(context, R.layout.layout_submenu, this)
@@ -29,47 +34,45 @@ class ArticleSubmenu @JvmOverloads constructor(
     fun open() {
         if (isOpen || !isAttachedToWindow) return
         isOpen = true
-//        animatedShow()
-        visibility = View.VISIBLE
+        animatedShow()
     }
 
     fun close() {
         if (!isOpen || !isAttachedToWindow) return
         isOpen = false
-//        animatedHide()
-        visibility = View.GONE
+        animatedHide()
     }
-//
-//    private fun animatedShow() {
-//        val endRadius = hypot(centerX, centerY).toInt()
-//        val anim = ViewAnimationUtils.createCircularReveal(
-//            this,
-//            centerX.toInt(),
-//            centerY.toInt(),
-//            0f,
-//            endRadius.toFloat()
-//        )
-//        anim.doOnStart {
-//            visibility = View.VISIBLE
-//        }
-//        anim.start()
-//    }
-//
-//    private fun animatedHide() {
-//        val endRadius = hypot(centerX, centerY).toInt()
-//        val anim = ViewAnimationUtils.createCircularReveal(
-//            this,
-//            centerX.toInt(),
-//            centerY.toInt(),
-//            endRadius.toFloat(),
-//            0f
-//        )
-//        anim.doOnEnd {
-//            visibility = View.GONE
-//        }
-//        anim.start()
-//    }
-//
+
+    private fun animatedShow() {
+        val endRadius = hypot(centerX, centerY).toInt()
+        val anim = ViewAnimationUtils.createCircularReveal(
+            this,
+            centerX.toInt(),
+            centerY.toInt(),
+            0f,
+            endRadius.toFloat()
+        )
+        anim.doOnStart {
+            visibility = View.VISIBLE
+        }
+        anim.start()
+    }
+
+    private fun animatedHide() {
+        val endRadius = hypot(centerX, centerY).toInt()
+        val anim = ViewAnimationUtils.createCircularReveal(
+            this,
+            centerX.toInt(),
+            centerY.toInt(),
+            endRadius.toFloat(),
+            0f
+        )
+        anim.doOnEnd {
+            visibility = View.GONE
+        }
+        anim.start()
+    }
+
     //save state
     override fun onSaveInstanceState(): Parcelable? {
         val savedState = SavedState(super.onSaveInstanceState())
