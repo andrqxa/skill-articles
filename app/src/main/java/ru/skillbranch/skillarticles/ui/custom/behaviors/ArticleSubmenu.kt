@@ -1,6 +1,8 @@
 package ru.skillbranch.skillarticles.ui.custom
 
 import android.content.Context
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +14,7 @@ class ArticleSubmenu @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
-//    var isOpen = false
+    var isOpen = false
 //    private var centerX: Float = context.dpToPx(200)
 //    private var centerY: Float = context.dpToPx(96)
 
@@ -24,17 +26,19 @@ class ArticleSubmenu @JvmOverloads constructor(
         background = materialBg
     }
 
-//    fun open() {
-//        if (isOpen || !isAttachedToWindow) return
-//        isOpen = true
+    fun open() {
+        if (isOpen || !isAttachedToWindow) return
+        isOpen = true
 //        animatedShow()
-//    }
-//
-//    fun close() {
-//        if (!isOpen || !isAttachedToWindow) return
-//        isOpen = false
+        visibility = View.VISIBLE
+    }
+
+    fun close() {
+        if (!isOpen || !isAttachedToWindow) return
+        isOpen = false
 //        animatedHide()
-//    }
+        visibility = View.GONE
+    }
 //
 //    private fun animatedShow() {
 //        val endRadius = hypot(centerX, centerY).toInt()
@@ -66,42 +70,42 @@ class ArticleSubmenu @JvmOverloads constructor(
 //        anim.start()
 //    }
 //
-//    //save state
-//    override fun onSaveInstanceState(): Parcelable? {
-//        val savedState = SavedState(super.onSaveInstanceState())
-//        savedState.ssIsOpen = isOpen
-//        return savedState
-//    }
-//
-//    //restore state
-//    override fun onRestoreInstanceState(state: Parcelable) {
-//        super.onRestoreInstanceState(state)
-//        if (state is SavedState) {
-//            isOpen = state.ssIsOpen
-//            visibility = if (isOpen) View.VISIBLE else View.GONE
-//        }
-//    }
-//
-//    private class SavedState : BaseSavedState, Parcelable {
-//        var ssIsOpen: Boolean = false
-//
-//        constructor(superState: Parcelable?) : super(superState)
-//
-//        constructor(src: Parcel) : super(src) {
-//            ssIsOpen = src.readInt() == 1
-//        }
-//
-//        override fun writeToParcel(dst: Parcel, flags: Int) {
-//            super.writeToParcel(dst, flags)
-//            dst.writeInt(if (ssIsOpen) 1 else 0)
-//        }
-//
-//        override fun describeContents() = 0
-//
-//        companion object CREATOR : Parcelable.Creator<SavedState> {
-//            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
-//            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
-//        }
-//    }
+    //save state
+    override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssIsOpen = isOpen
+        return savedState
+    }
+
+    //restore state
+    override fun onRestoreInstanceState(state: Parcelable) {
+        super.onRestoreInstanceState(state)
+        if (state is SavedState) {
+            isOpen = state.ssIsOpen
+            visibility = if (isOpen) View.VISIBLE else View.GONE
+        }
+    }
+
+    private class SavedState : BaseSavedState, Parcelable {
+        var ssIsOpen: Boolean = false
+
+        constructor(superState: Parcelable?) : super(superState)
+
+        constructor(src: Parcel) : super(src) {
+            ssIsOpen = src.readInt() == 1
+        }
+
+        override fun writeToParcel(dst: Parcel, flags: Int) {
+            super.writeToParcel(dst, flags)
+            dst.writeInt(if (ssIsOpen) 1 else 0)
+        }
+
+        override fun describeContents() = 0
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+        }
+    }
 
 }
