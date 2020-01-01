@@ -1,6 +1,47 @@
 package ru.skillbranch.skillarticles.ui.viewmodels
 
-class ArticleViewModel(articleId: String): BaseViewModel<ArticleState>(ArticleState())
+class ArticleViewModel(articleId: String): BaseViewModel<ArticleState>(ArticleState()){
+
+    init {
+        //TODO implement me
+    }
+
+    fun handleUpText() {
+        //TODO implement me
+    }
+
+    fun handleDownText() {
+        //TODO implement me
+    }
+
+    fun handleNightMode() {
+        //TODO implement me
+    }
+
+    fun handleLike() {
+        //TODO implement me
+    }
+
+    fun handleBookmark() {
+        //TODO implement me
+    }
+
+    fun handleShare() {
+        //TODO implement me
+    }
+
+    fun handleToggleMenu() {
+        updateState { it.copy(isShowMenu = !it.isShowMenu) }
+    }
+
+    fun handleSearchMode(isSearch: Boolean) {
+        //TODO implement me
+    }
+
+    fun handleSearch(query: String?) {
+       //TODO implement me
+    }
+}
 
 data class ArticleState (
     val isAuth: Boolean = false, //пользовватель авторизован

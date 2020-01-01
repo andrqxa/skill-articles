@@ -5,30 +5,78 @@ import android.widget.ImageView
 import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.google.android.material.snackbar.Snackbar
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
+import ru.skillbranch.skillarticles.ui.viewmodels.ArticleState
+import ru.skillbranch.skillarticles.ui.viewmodels.ArticleViewModel
+import ru.skillbranch.skillarticles.ui.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: ArticleViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_root)
         setupToolbar()
+        setupBottomBar()
+        setupSubmenu()
 
-        btn_like.setOnClickListener {
-            Snackbar.make(coordinator_container, "test", Snackbar.LENGTH_LONG)
-                .setAnchorView(bottombar)
-                .show()
+        val vmFactory = ViewModelFactory("0")
+        viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
+        viewModel.observeState(this){
+            renderUi(it)
+        }
+    }
+
+    private fun setupSubmenu() {
+        btn_text_up.setOnClickListener { viewModel.handleUpText() }
+        btn_text_down.setOnClickListener { viewModel.handleDownText() }
+        switch_mode.setOnClickListener { viewModel.handleNightMode() }
+    }
+
+    private fun setupBottomBar() {
+        btn_like.setOnClickListener { viewModel.handleLike() }
+        btn_bookmark.setOnClickListener { viewModel.handleBookmark() }
+        btn_share.setOnClickListener { viewModel.handleShare() }
+        btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
+    }
+
+    private fun renderUi(data: ArticleState) {
+        //bind submenu state
+        btn_settings.isChecked = data.isShowMenu
+        if(data.isShowMenu) submenu.open() else submenu.close()
+
+        //bind article person data
+        btn_like.isChecked = data.isLike
+        btn_bookmark.isChecked = data.isBookmark
+
+        //bind submenu views
+        switch_mode.isChecked = data.isDarkMode
+        delegate.localNightMode =
+            if(data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+
+        if(data.isBigText){
+            tv_text_content.textSize = 18F
+            btn_text_up.isChecked = true
+            btn_text_down.isChecked = false
+        } else {
+            tv_text_content.textSize = 14F
+            btn_text_up.isChecked = false
+            btn_text_down.isChecked = true
         }
 
-        switch_mode.setOnClickListener {
-            delegate.localNightMode =
-                if (switch_mode.isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-        }
+        //bind content
+        tv_text_content.text = if(data.isLoadingContent) "Loading" else data.content.first() as String
+
+        //bind toolbar
+        toolbar.title = data.title ?: "loading"
+        toolbar.subtitle = data.category ?: "loading"
+        if(data.categoryIcon != null ) toolbar.logo = getDrawable(data.categoryIcon as Int)
     }
 
     private fun setupToolbar() {
