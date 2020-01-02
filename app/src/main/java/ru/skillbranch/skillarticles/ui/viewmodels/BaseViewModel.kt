@@ -29,6 +29,20 @@ abstract class BaseViewModel<T>(initState: T): ViewModel() {
     fun observeState(owner: LifecycleOwner, onChanged: (newState: T) -> Unit){
         state.observe(owner, Observer { onChanged(it!!) })
     }
+
+    /***
+    * функция принимает источник данных и лямбду, обрабатывающую поступающие данные. Лямбда принимает
+    * новые данные и текущее состояние, изменяет его и возвращает модифицированное состояние устанавливается
+     * как текущее
+    */
+    protected fun <S> subscribeOnDataSource(
+        source: LiveData<S>,
+        onChanged: (newValue: S, currentState: T) -> T?
+        ){
+            state.addSource(source){
+                state.value = onChanged(it, currentState) ?: return@addSource
+            }
+    }
 }
 
 class ViewModelFactory(private val params: String): ViewModelProvider.Factory {

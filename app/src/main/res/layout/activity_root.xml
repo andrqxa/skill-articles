@@ -12,18 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/ArticleToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:elevation="4dp"
-            android:theme="@style/ArticleBarsTheme"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:logo="@drawable/logo_placeholder"
-            app:subtitle="loading..."
-            app:title="@string/app_name" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -61,6 +49,20 @@
         android:theme="@style/ArticleBarsTheme"
         android:elevation="4dp"
         app:layout_insetEdge="bottom" />
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/ArticleToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ArticleBarsTheme"
+        app:layout_anchor="@+id/appbar"
+        app:layout_anchorGravity="center"
+        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+        app:logo="@drawable/logo_placeholder"
+        app:subtitle="loading..."
+        app:title="@string/app_name" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
