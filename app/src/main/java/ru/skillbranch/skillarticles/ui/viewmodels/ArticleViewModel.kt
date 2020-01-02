@@ -5,6 +5,7 @@ import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
+import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 
 class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleState>(ArticleState()){
@@ -77,7 +78,23 @@ class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleStat
     }
 
     fun handleLike() {
-        //TODO implement me
+        val toggleLike = {
+            val info = currentState.toArticlePersonalInfo()
+            repository.updateArticlePersonalInfo(info.copy(isLike = !info.isLike))
+        }
+
+        toggleLike()
+
+        val msg = if(currentState.isLike) Notify.TextMessage("Mark is liked")
+        else {
+            Notify.ActionMessage(
+                "Don`t like it anymore", //message
+                "No, still like it", // action label on snackbar
+                toggleLike // handle function, if press `No, still like it` on snackbar, then toggle again
+            )
+        }
+
+        notify(msg)
     }
 
 //    personal article info
@@ -85,8 +102,10 @@ class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleStat
         //TODO implement me
     }
 
+//    not implemented
     fun handleShare() {
-        //TODO implement me
+        val msg = "Share is not implemented"
+        notify(Notify.ErrorMessage(msg, "OK", null))
     }
 
     fun handleToggleMenu() {

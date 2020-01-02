@@ -24,12 +24,25 @@ abstract class BaseViewModel<T>(initState: T): ViewModel() {
         state.value = updatedState
     }
 
+    @UiThread
+    protected fun notify(content: Notify){
+        notifications.value = Event(content)
+    }
+
     /***
-    * более компактная форма записи observe принимает последним аргументом лямбду обрабатывающую
-    * изменение текущего состояния
-    */
+     * более компактная форма записи observe принимает последним аргументом лямбду обрабатывающую
+     * изменение текущего состояния
+     */
     fun observeState(owner: LifecycleOwner, onChanged: (newState: T) -> Unit){
         state.observe(owner, Observer { onChanged(it!!) })
+    }
+
+    /***
+     * более компактная форма записи observe вызывает лямбда обработчик только в том случае, если
+     * сообщение не было уже обработано, реализует данное поведение благодаря EventObserver
+     */
+    fun observeNotifications(owner: LifecycleOwner, onNotify: (notification: Notify) -> Unit){
+        notifications.observe(owner, EventObserver { onNotify(it) })
     }
 
     /***
