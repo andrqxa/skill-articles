@@ -4,6 +4,8 @@ import androidx.annotation.UiThread
 import androidx.lifecycle.*
 
 abstract class BaseViewModel<T>(initState: T): ViewModel() {
+    protected val notifications = MutableLiveData<Event<Notify>>()
+
     protected val state: MediatorLiveData<T> = MediatorLiveData<T>().apply {
         value = initState
     }
@@ -52,5 +54,45 @@ class ViewModelFactory(private val params: String): ViewModelProvider.Factory {
         }
         throw IllegalArgumentException("Unknown ViewModel class ")
     }
+}
 
+class Event<out E> (private val content: E){
+    var hasBeenHandled = false
+
+//    возвращает контент который еще не был обработан иначе null
+    fun getContentIfNotHnadled(): E? {
+        return if(hasBeenHandled) null
+        else {
+            hasBeenHandled = true
+            content
+        }
+    }
+}
+
+class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit): Observer<Event<E>>{
+//    в качестве аргумента принимает лямбда обработчик в котороую передается необработанное ранее событие
+//    получаемое в реализации метода Observer`a onChanged
+    override fun onChanged(event: Event<E>?) {
+//        если есть необработанное событие (контент) передай в качестве аргумента в лямбду
+//        onEventUnhandledContent
+        event?.getContentIfNotHnadled()?.let {
+            onEventUnhandledContent(it)
+        }
+    }
+}
+
+sealed class Notify(val message: String) {
+    data class TextMessage(val msg: String): Notify(msg)
+
+    data class ActionMessage(
+        val msg: String,
+        val actionLabel: String,
+        val actionHandler: (() -> Unit)?
+    ) : Notify(msg)
+
+    data class ErrorMessage(
+        val msg: String,
+        val errLabel: String,
+        val errHandler: (() -> Unit)?
+    ) : Notify(msg)
 }
