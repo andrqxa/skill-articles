@@ -12,10 +12,10 @@ import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
-import ru.skillbranch.skillarticles.ui.viewmodels.ArticleState
-import ru.skillbranch.skillarticles.ui.viewmodels.ArticleViewModel
-import ru.skillbranch.skillarticles.ui.viewmodels.Notify
-import ru.skillbranch.skillarticles.ui.viewmodels.ViewModelFactory
+import ru.skillbranch.skillarticles.viewmodels.ArticleState
+import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
+import ru.skillbranch.skillarticles.viewmodels.Notify
+import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
 
@@ -28,7 +28,8 @@ class RootActivity : AppCompatActivity() {
         setupBottomBar()
         setupSubmenu()
 
-        val vmFactory = ViewModelFactory("0")
+        val vmFactory =
+            ViewModelFactory("0")
         viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
         viewModel.observeState(this){
             renderUi(it)

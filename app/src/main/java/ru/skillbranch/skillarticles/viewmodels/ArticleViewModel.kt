@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.ui.viewmodels
+package ru.skillbranch.skillarticles.viewmodels
 
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.ArticleData
@@ -8,7 +8,9 @@ import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 
-class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleState>(ArticleState()){
+class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleState>(
+    ArticleState()
+){
     private val repository = ArticleRepository
 
     init {
@@ -85,7 +87,9 @@ class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleStat
 
         toggleLike()
 
-        val msg = if(currentState.isLike) Notify.TextMessage("Mark is liked")
+        val msg = if(currentState.isLike) Notify.TextMessage(
+            "Mark is liked"
+        )
         else {
             Notify.ActionMessage(
                 "Don`t like it anymore", //message
@@ -105,7 +109,13 @@ class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleStat
 //    not implemented
     fun handleShare() {
         val msg = "Share is not implemented"
-        notify(Notify.ErrorMessage(msg, "OK", null))
+        notify(
+            Notify.ErrorMessage(
+                msg,
+                "OK",
+                null
+            )
+        )
     }
 
     fun handleToggleMenu() {

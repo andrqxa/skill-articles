@@ -1,17 +1,21 @@
-package ru.skillbranch.skillarticles.ui.viewmodels
+package ru.skillbranch.skillarticles.viewmodels
 
 import androidx.annotation.UiThread
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 
 abstract class BaseViewModel<T>(initState: T): ViewModel() {
-    protected val notifications = MutableLiveData<Event<Notify>>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    val notifications = MutableLiveData<Event<Notify>>()
 
-    protected val state: MediatorLiveData<T> = MediatorLiveData<T>().apply {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    val state: MediatorLiveData<T> = MediatorLiveData<T>().apply {
         value = initState
     }
 
 //    not null current state
-    protected val currentState
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    val currentState
         get() = state.value!!
 
     /***
@@ -26,7 +30,8 @@ abstract class BaseViewModel<T>(initState: T): ViewModel() {
 
     @UiThread
     protected fun notify(content: Notify){
-        notifications.value = Event(content)
+        notifications.value =
+            Event(content)
     }
 
     /***
@@ -42,7 +47,8 @@ abstract class BaseViewModel<T>(initState: T): ViewModel() {
      * сообщение не было уже обработано, реализует данное поведение благодаря EventObserver
      */
     fun observeNotifications(owner: LifecycleOwner, onNotify: (notification: Notify) -> Unit){
-        notifications.observe(owner, EventObserver { onNotify(it) })
+        notifications.observe(owner,
+            EventObserver { onNotify(it) })
     }
 
     /***
@@ -63,7 +69,9 @@ abstract class BaseViewModel<T>(initState: T): ViewModel() {
 class ViewModelFactory(private val params: String): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ArticleViewModel::class.java)){
-            return ArticleViewModel(params) as T
+            return ArticleViewModel(
+                params
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class ")
     }
@@ -80,6 +88,8 @@ class Event<out E> (private val content: E){
             content
         }
     }
+
+    fun peekContent(): E = content
 }
 
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit): Observer<Event<E>>{
