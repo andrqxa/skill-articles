@@ -37,18 +37,18 @@
         android:layout_marginBottom="8dp"
         android:elevation="8dp"
         android:theme="@style/ArticleBarsTheme"
-        app:layout_dodgeInsetEdges="bottom"
         android:visibility="gone"
-        tools:visibility="visible"/>
+        app:layout_dodgeInsetEdges="bottom"
+        tools:visibility="visible" />
 
     <ru.skillbranch.skillarticles.ui.custom.Bottombar
         android:id="@+id/bottombar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_gravity="bottom"
-        android:theme="@style/ArticleBarsTheme"
         android:elevation="4dp"
-        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior"
+        android:theme="@style/ArticleBarsTheme"
+        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarScrollBehavior"
         app:layout_insetEdge="bottom" />
 
     <com.google.android.material.appbar.MaterialToolbar
