@@ -1,9 +1,12 @@
 package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
@@ -11,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.R.id.search_src_text
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
@@ -39,6 +43,52 @@ class RootActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_article, menu)
+
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.queryHint = getString(R.string.menu_search_hint)
+
+        searchView
+            .findViewById<SearchView.SearchAutoComplete>(search_src_text)
+            .apply {
+                setTextColor(getColor(R.color.color_on_surface))
+                setHintTextColor(getColor(R.color.color_hint_on_surface))
+            }
+
+        if (viewModel.currentState.isSearch) {
+            searchItem.expandActionView()
+            searchView.setQuery(viewModel.currentState.searchQuery, false)
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.handleSearch(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.handleSearch(newText)
+                return true
+            }
+        })
+
+        searchItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                viewModel.handleSearchMode(true)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                viewModel.handleSearchMode(false)
+                return true
+            }
+        })
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
     private fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
             .setAnchorView(bottombar)
@@ -50,7 +100,7 @@ class RootActivity : AppCompatActivity() {
             is Notify.ActionMessage -> {
                 snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
                 snackbar.setAction(notify.actionLabel){
-                    notify.actionHandler?.invoke()
+                    notify.actionHandler.invoke()
                 }
             }
 
