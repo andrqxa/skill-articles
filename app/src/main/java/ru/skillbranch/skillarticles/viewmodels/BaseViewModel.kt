@@ -67,7 +67,7 @@ abstract class BaseViewModel<T>(initState: T): ViewModel() {
 }
 
 class ViewModelFactory(private val params: String): ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ArticleViewModel::class.java)){
             return ArticleViewModel(
                 params
@@ -81,7 +81,7 @@ class Event<out E> (private val content: E){
     var hasBeenHandled = false
 
 //    возвращает контент который еще не был обработан иначе null
-    fun getContentIfNotHnadled(): E? {
+    fun getContentIfNotHandled(): E? {
         return if(hasBeenHandled) null
         else {
             hasBeenHandled = true
@@ -98,7 +98,7 @@ class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit): Observ
     override fun onChanged(event: Event<E>?) {
 //        если есть необработанное событие (контент) передай в качестве аргумента в лямбду
 //        onEventUnhandledContent
-        event?.getContentIfNotHnadled()?.let {
+        event?.getContentIfNotHandled()?.let {
             onEventUnhandledContent(it)
         }
     }
@@ -110,12 +110,12 @@ sealed class Notify(val message: String) {
     data class ActionMessage(
         val msg: String,
         val actionLabel: String,
-        val actionHandler: (() -> Unit)?
+        val actionHandler: (() -> Unit)
     ) : Notify(msg)
 
     data class ErrorMessage(
         val msg: String,
-        val errLabel: String,
+        val errLabel: String?,
         val errHandler: (() -> Unit)?
     ) : Notify(msg)
 }
