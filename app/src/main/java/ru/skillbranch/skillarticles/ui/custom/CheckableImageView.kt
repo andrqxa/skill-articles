@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.ui.custom.behaviors
+package ru.skillbranch.skillarticles.ui.custom
 
 import android.content.Context
 import android.util.AttributeSet
@@ -24,7 +24,9 @@ class CheckableImageView @JvmOverloads constructor(
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         val drawableState = super.onCreateDrawableState(extraSpace + 1)
         if (isChecked) {
-            View.mergeDrawableStates(drawableState, CHECKED_STATE_SET)
+            View.mergeDrawableStates(drawableState,
+                CHECKED_STATE_SET
+            )
         }
         return drawableState
     }
