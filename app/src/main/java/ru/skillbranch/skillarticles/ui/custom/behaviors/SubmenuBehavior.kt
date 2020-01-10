@@ -21,6 +21,6 @@ class SubmenuBehavior<V : View>(context: Context, attrs: AttributeSet) :
         coordinatorLayout: CoordinatorLayout, child: V, target: View, dx: Int, dy: Int, consumed: IntArray, type: Int
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-        child.translationX = max(0f, min(child.width.toFloat(), child.translationX + dx))
+        child.translationX = max(0f, min(child.width.toFloat(), child.translationX + dy))
     }
 }
