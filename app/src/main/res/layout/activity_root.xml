@@ -62,7 +62,7 @@
         app:layout_anchor="@+id/appbar"
         app:layout_anchorGravity="center"
         app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.ToolbarBehavior"
+        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior"
         app:logo="@drawable/logo_placeholder"
         app:subtitle="loading..."
         app:title="@string/app_name"/>
