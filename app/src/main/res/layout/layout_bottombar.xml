@@ -29,11 +29,11 @@
     <ImageView
         android:id="@+id/btn_share"
         style="@style/BottombarIcon"
+        android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_share_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_bookmark"
-        android:clickable="true"
-        android:focusable="true"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ru.skillbranch.skillarticles.ui.custom.CheckableImageView
@@ -43,5 +43,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:visibility="gone"
+        app:constraint_referenced_ids="btn_settings,btn_like,btn_share,btn_bookmark" />
 
 </merge>
