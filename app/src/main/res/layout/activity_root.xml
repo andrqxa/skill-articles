@@ -12,9 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/ArticleToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:theme="@style/ArticleBarsTheme"
+            app:layout_anchor="@+id/appbar"
+            app:layout_anchorGravity="center"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+            app:logo="@drawable/logo_placeholder"
+            app:subtitle="loading..."
+            app:title="@string/app_name" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
@@ -24,6 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:saveEnabled="false"
             android:text="Loading..." />
 
     </androidx.core.widget.NestedScrollView>
@@ -37,8 +55,8 @@
         android:layout_marginBottom="8dp"
         android:elevation="8dp"
         android:theme="@style/ArticleBarsTheme"
-        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior"
         android:visibility="gone"
+        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior"
         app:layout_dodgeInsetEdges="bottom"
         tools:visibility="visible" />
 
@@ -51,21 +69,6 @@
         android:theme="@style/ArticleBarsTheme"
         app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior"
         app:layout_insetEdge="bottom" />
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/ArticleToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        android:theme="@style/ArticleBarsTheme"
-        app:layout_anchor="@+id/appbar"
-        app:layout_anchorGravity="center"
-        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior"
-        app:logo="@drawable/logo_placeholder"
-        app:subtitle="loading..."
-        app:title="@string/app_name"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
