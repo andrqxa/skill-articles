@@ -12,7 +12,6 @@ import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import com.google.android.material.shape.MaterialShapeDrawable
 import kotlinx.android.synthetic.main.layout_bottombar.view.*
-import kotlinx.android.synthetic.main.layout_submenu.view.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior
 import kotlin.math.hypot
@@ -90,12 +89,12 @@ class Bottombar @JvmOverloads constructor(
     fun bindSearchInfo(searchCount: Int = 0, position: Int = 0) {
         if (searchCount == 0) {
             tv_search_result.text = "Not found"
-            btn_text_up.isEnabled = false
-            btn_text_down.isEnabled = false
+            btn_result_up.isEnabled = false
+            btn_result_down.isEnabled = false
         } else {
             tv_search_result.text = "${position.inc()} of $searchCount"
-            btn_text_up.isEnabled = true
-            btn_text_down.isEnabled = true
+            btn_result_up.isEnabled = true
+            btn_result_down.isEnabled = true
         }
 //        lock button presses in mix/man positions
         when (position) {

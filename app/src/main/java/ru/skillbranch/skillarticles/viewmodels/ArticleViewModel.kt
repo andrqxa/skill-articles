@@ -148,8 +148,6 @@ class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleStat
     }
 }
 
-
-
 data class ArticleState (
     val isAuth: Boolean = false, //пользовватель авторизован
     val isLoadingContent: Boolean = true, // контент загружается
