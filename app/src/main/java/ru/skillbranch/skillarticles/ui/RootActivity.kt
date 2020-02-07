@@ -1,6 +1,9 @@
 package ru.skillbranch.skillarticles.ui
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -19,6 +22,7 @@ import ru.skillbranch.skillarticles.R.id.search_src_text
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setMarginOptionally
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
+import ru.skillbranch.skillarticles.ui.custom.SearchSpan
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -52,12 +56,25 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     }
 
     override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
+        val content = tv_text_content.text as Spannable
+        val bgColor = Color.RED
+        val fgColor = Color.WHITE
+        searchResult.forEach { (start, end) ->
+            content.setSpan(
+                SearchSpan(bgColor, fgColor),
+                start,
+                end,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
     }
 
     override fun renderSearchPosition(searchPosition: Int) {
+        TODO("not implemented")
     }
 
     override fun clearSearchResult() {
+        TODO("not implemented")
     }
 
     override fun showSearchBar() {
