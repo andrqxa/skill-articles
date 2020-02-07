@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -16,13 +17,14 @@ import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.R.id.search_src_text
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
+import ru.skillbranch.skillarticles.extensions.setMarginOptionally
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
-class RootActivity : BaseActivity<ArticleViewModel>() {
+class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override val layout = R.layout.activity_root
     override lateinit var viewModel: ArticleViewModel
 
@@ -48,6 +50,25 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
         setupToolbar()
         setupBottomBar()
         setupSubmenu()
+    }
+
+    override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
+    }
+
+    override fun renderSearchPosition(searchPosition: Int) {
+    }
+
+    override fun clearSearchResult() {
+    }
+
+    override fun showSearchBar() {
+        bottombar.setSearchState(true)
+        scroll.setMarginOptionally(bottom = dpToIntPx(56))
+    }
+
+    override fun hideSearchBar() {
+        bottombar.setSearchState(false)
+        scroll.setMarginOptionally(bottom = dpToIntPx(0))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -157,8 +178,9 @@ class RootActivity : BaseActivity<ArticleViewModel>() {
     }
 
     private fun renderUi(data: ArticleState) {
+        Log.e("RootActivity", "renderUi: $data")
 
-        bottombar.setSearchState(data.isSearch)
+        if (data.isSearch) showSearchBar() else hideSearchBar()
 
         //bind submenu state
         btn_settings.isChecked = data.isShowMenu
