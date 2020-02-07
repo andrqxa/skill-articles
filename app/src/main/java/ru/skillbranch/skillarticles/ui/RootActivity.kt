@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -13,42 +12,42 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
+import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.R.id.search_src_text
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
+import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
-import ru.skillbranch.skillarticles.viewmodels.Notify
-import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
+import ru.skillbranch.skillarticles.viewmodels.base.Notify
+import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
-class RootActivity : AppCompatActivity() {
+class RootActivity : BaseActivity<ArticleViewModel>() {
+    override val layout = R.layout.activity_root
+    override lateinit var viewModel: ArticleViewModel
 
-    private lateinit var viewModel: ArticleViewModel
     private var searchQuery: String? = null
     private var isSearching = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_root)
-        setupToolbar()
-        setupBottomBar()
-        setupSubmenu()
 
         val vmFactory =
             ViewModelFactory("0")
         viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
         viewModel.observeState(this){
             renderUi(it)
-
-            // restore search mode
-            if (it.isSearch) {
-                isSearching = true
-                searchQuery = it.searchQuery
-            }
         }
         viewModel.observeNotifications(this){
             renderNotification(it)
         }
+    }
+
+    override fun setupViews() {
+        setupToolbar()
+        setupBottomBar()
+        setupSubmenu()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -140,9 +139,27 @@ class RootActivity : AppCompatActivity() {
         btn_bookmark.setOnClickListener { viewModel.handleBookmark() }
         btn_share.setOnClickListener { viewModel.handleShare() }
         btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
+
+        btn_result_up.setOnClickListener {
+            if (search_view.hasFocus()) search_view.clearFocus()
+            viewModel.handleUpResult()
+        }
+
+        btn_result_down.setOnClickListener {
+            if (search_view.hasFocus()) search_view.clearFocus()
+            viewModel.handleDownResult()
+        }
+
+        btn_search_close.setOnClickListener {
+            viewModel.handleSearchMode(false)
+            invalidateOptionsMenu()
+        }
     }
 
     private fun renderUi(data: ArticleState) {
+
+        bottombar.setSearchState(data.isSearch)
+
         //bind submenu state
         btn_settings.isChecked = data.isShowMenu
         if(data.isShowMenu) submenu.open() else submenu.close()

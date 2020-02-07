@@ -60,7 +60,7 @@ class Bottombar @JvmOverloads constructor(
     }
 
     private fun animateHideSearchPanel() {
-        group_bottom.isVisible = false
+        group_bottom.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
         val va = ViewAnimationUtils.createCircularReveal(
             reveal,
@@ -74,7 +74,7 @@ class Bottombar @JvmOverloads constructor(
     }
 
     private fun animateShowSearchPanel() {
-        reveal.isVisible = false
+        reveal.isVisible = true
         val endRadius = hypot(width.toFloat(), height / 2f)
         val va = ViewAnimationUtils.createCircularReveal(
             reveal,
@@ -97,10 +97,10 @@ class Bottombar @JvmOverloads constructor(
             btn_text_up.isEnabled = true
             btn_text_down.isEnabled = true
         }
-
+//        lock button presses in mix/man positions
         when (position) {
             0 -> btn_result_up.isEnabled = false
-            -1 -> btn_result_down.isEnabled = false
+            searchCount - 1 -> btn_result_down.isEnabled = false
         }
     }
 
