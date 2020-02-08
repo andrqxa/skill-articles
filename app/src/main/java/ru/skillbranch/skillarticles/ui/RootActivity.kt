@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -198,6 +199,8 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
         if (data.isSearch) showSearchBar() else hideSearchBar()
 
+        if (data.searchResults.isNotEmpty()) renderSearchResult(data.searchResults)
+
         //bind submenu state
         btn_settings.isChecked = data.isShowMenu
         if(data.isShowMenu) submenu.open() else submenu.close()
@@ -222,7 +225,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         }
 
         //bind content
-        tv_text_content.text = if(data.isLoadingContent) "Loading" else data.content.first() as String
+        if (data.isLoadingContent) {
+            tv_text_content.text = "loading"
+        } else if (tv_text_content.text == "loading") { // don`t override content
+            val content = data.content.first() as String
+            tv_text_content.setText(content, TextView.BufferType.SPANNABLE)
+        }
 
         //bind toolbar
         toolbar.title = data.title ?: "loading"

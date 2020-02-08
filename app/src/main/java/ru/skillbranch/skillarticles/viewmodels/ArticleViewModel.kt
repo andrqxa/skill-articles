@@ -8,6 +8,7 @@ import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
+import ru.skillbranch.skillarticles.extensions.indexesOf
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -138,13 +139,18 @@ class ArticleViewModel(private val articleId: String): BaseViewModel<ArticleStat
     }
 
     override fun handleSearch(query: String?) {
-        updateState { it.copy(searchQuery = query) }
+        query ?: return
+        val result = (currentState.content.firstOrNull() as String).indexesOf(query)
+            .map { it to it + query.length }
+        updateState { it.copy(searchQuery = query, searchResults = result) }
     }
 
     fun handleUpResult() {
+        updateState { it.copy(searchPosition = it.searchPosition.dec()) }
     }
 
     fun handleDownResult() {
+        updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
 }
 
@@ -159,7 +165,7 @@ data class ArticleState (
     val isDarkMode: Boolean = false, // темный режим
     val isSearch: Boolean = false, // режим поиска
     val searchQuery: String? = null, // поисковый запрос
-    val searchResult: List<Pair<Int, Int>> = emptyList(), // результаты поиска (стартовая и конечная позиция)
+    val searchResults: List<Pair<Int, Int>> = emptyList(), // результаты поиска (стартовая и конечная позиция)
     val searchPosition: Int = 0, // текущая позиция найденного результата
     val shareLink: String? = null, // ссылка Share
     val title: String? = null, // заголовок статьи
