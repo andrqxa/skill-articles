@@ -1,6 +1,5 @@
 package ru.skillbranch.skillarticles.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Selection
 import android.text.Spannable
@@ -28,6 +27,7 @@ import ru.skillbranch.skillarticles.extensions.setMarginOptionally
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.ui.custom.SearchFocusSpan
 import ru.skillbranch.skillarticles.ui.custom.SearchSpan
+import ru.skillbranch.skillarticles.ui.gelegates.AttrValue
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
@@ -39,6 +39,9 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     private var searchQuery: String? = null
     private var isSearching = false
+
+    private val bgColor by AttrValue(R.attr.colorSecondary)
+    private val fgColor by AttrValue(R.attr.colorOnSecondary)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +65,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
         val content = tv_text_content.text as Spannable
-        val bgColor = Color.RED
-        val fgColor = Color.WHITE
 
         // clear entry search result
         clearSearchResult()
@@ -83,8 +84,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override fun renderSearchPosition(searchPosition: Int) {
         val content = tv_text_content.text as Spannable
-        val bgColor = Color.RED
-        val fgColor = Color.WHITE
 
         val spans = content.getSpans<SearchSpan>()
         // clear las search position
