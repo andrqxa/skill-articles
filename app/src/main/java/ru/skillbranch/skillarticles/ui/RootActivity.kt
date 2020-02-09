@@ -25,17 +25,22 @@ import ru.skillbranch.skillarticles.R.id.search_src_text
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setMarginOptionally
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
+import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.custom.SearchFocusSpan
 import ru.skillbranch.skillarticles.ui.custom.SearchSpan
 import ru.skillbranch.skillarticles.ui.gelegates.AttrValue
+import ru.skillbranch.skillarticles.ui.gelegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
+
     override val layout = R.layout.activity_root
     override lateinit var viewModel: ArticleViewModel
+    override val binding: Binding by lazy { ArticleBinding() }
 
     private var searchQuery: String? = null
     private var isSearching = false
@@ -167,7 +172,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun renderNotification(notify: Notify) {
+    override fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
             .setAnchorView(bottombar)
             .setActionTextColor(getColor(R.color.color_accent_dark))
@@ -282,6 +287,27 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             it.height = this.dpToIntPx(40)
             it.marginEnd = this.dpToIntPx(16)
             logo.layoutParams = it
+        }
+    }
+
+    inner class ArticleBinding : Binding() {
+        private var isLike: Boolean by RenderProp(false) { btn_like.isChecked = it }
+        private var isBookmark: Boolean by RenderProp(false) { btn_bookmark.isChecked = it }
+        private var isShowMenu: Boolean by RenderProp(false) {
+            btn_settings.isChecked = it
+            if (it) submenu.open() else submenu.close()
+        }
+
+
+        override fun onFinishInfale() {
+        }
+
+        override fun bind(data: IViewModelState) {
+            data as ArticleState
+
+            isLike = data.isLike
+            isBookmark = data.isBookmark
+            isShowMenu = data.isShowMenu
         }
     }
 }
