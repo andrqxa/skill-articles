@@ -20,7 +20,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
         super.onCreate(savedInstanceState)
         setContentView(layout)
         setupViews()
-        binding.onFinishInfale()
+        binding.onFinishInflate()
         viewModel.observeState(this) { binding.bind(it) }
         viewModel.observeNotifications(this) { renderNotification(it) }
     }
