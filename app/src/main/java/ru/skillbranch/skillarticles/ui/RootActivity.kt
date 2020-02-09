@@ -119,6 +119,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         scroll.setMarginOptionally(bottom = dpToIntPx(0))
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
 
