@@ -1,6 +1,5 @@
 package ru.skillbranch.skillarticles.ui
 
-import android.os.Bundle
 import android.text.Selection
 import android.text.Spannable
 import android.text.SpannableString
@@ -39,7 +38,10 @@ import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override val layout = R.layout.activity_root
-    override lateinit var viewModel: ArticleViewModel
+    override val viewModel: ArticleViewModel by lazy {
+        val vmFactory = ViewModelFactory("0")
+        ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
+    }
     override val binding: Binding by lazy { ArticleBinding() }
 
     private var searchQuery: String? = null
@@ -47,20 +49,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     private val bgColor by AttrValue(R.attr.colorSecondary)
     private val fgColor by AttrValue(R.attr.colorOnSecondary)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val vmFactory =
-            ViewModelFactory("0")
-        viewModel = ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
-        viewModel.observeState(this){
-            renderUi(it)
-        }
-        viewModel.observeNotifications(this){
-            renderNotification(it)
-        }
-    }
 
     override fun setupViews() {
         setupToolbar()
@@ -296,6 +284,27 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         private var isShowMenu: Boolean by RenderProp(false) {
             btn_settings.isChecked = it
             if (it) submenu.open() else submenu.close()
+        }
+        private var title: String by RenderProp("loading") { toolbar.title = it }
+        private var category: String by RenderProp("loading") { toolbar.subtitle = it }
+        private var categoryIcon: Int by RenderProp(R.drawable.logo_placeholder) {
+            toolbar.logo = getDrawable(it)
+        }
+        private var isBigText: Boolean by RenderProp(false) {
+            if (it) {
+                tv_text_content.textSize = 18f
+                btn_text_up.isChecked = true
+                btn_text_down.isChecked = false
+            } else {
+                tv_text_content.textSize = 14f
+                btn_text_up.isChecked = false
+                btn_text_down.isChecked = true
+            }
+        }
+        private var isDarkMode: Boolean by RenderProp(false, false) {
+            switch_mode.isChecked = it
+            delegate.localNightMode = if (it) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
         }
 
 
