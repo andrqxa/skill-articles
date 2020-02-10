@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.ui
 
+import android.os.Bundle
 import android.text.Selection
 import android.text.Spannable
 import android.text.SpannableString
@@ -42,10 +43,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val vmFactory = ViewModelFactory("0")
         ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
     }
-    override val binding: Binding by lazy { ArticleBinding() }
-
-    private var searchQuery: String? = null
-    private var isSearching = false
+    override val binding: ArticleBinding by lazy { ArticleBinding() }
 
     private val bgColor by AttrValue(R.attr.colorSecondary)
     private val fgColor by AttrValue(R.attr.colorOnSecondary)
@@ -120,10 +118,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         searchView.queryHint = getString(R.string.menu_search_hint)
 
         // restore SearchView
-        if (isSearching) {
+        if (binding.isSearch) {
             menuItem.expandActionView()
-            searchView.setQuery(searchQuery, false)
-            searchView.clearFocus()
+            searchView.setQuery(binding.searchQuery, false)
+
+            if (binding.isFocusedSearch) searchView.requestFocus()
+            else searchView.clearFocus()
         }
 
         searchView
@@ -233,6 +233,8 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     }
 
     inner class ArticleBinding : Binding() {
+        var isFocusedSearch: Boolean = false
+        var searchQuery: String? = null
 
         private var isLoadingContent by ObserveProp(true)
 
@@ -288,6 +290,9 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                     renderSearchResult(sr)
                     renderSearchPosition(sp)
                 }
+                if (!ilc && !iss) {
+                    clearSearchResult()
+                }
 
                 bottombar.bindSearchInfo(sr.size, sp)
 
@@ -313,6 +318,14 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             searchQuery = data.searchQuery
             searchPosition = data.searchPosition
             searchResults = data.searchResults
+        }
+
+        override fun saveUi(outState: Bundle) {
+            outState.putBoolean(::isFocusedSearch.name, search_view?.hasFocus() ?: false)
+        }
+
+        override fun restoreUi(savedState: Bundle) {
+            isFocusedSearch = savedState.getBoolean(::isFocusedSearch.name)
         }
     }
 }
