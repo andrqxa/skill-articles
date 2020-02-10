@@ -1,4 +1,4 @@
-package ru.skillbranch.skillarticles.ui.gelegates
+package ru.skillbranch.skillarticles.ui.delegates
 
 import ru.skillbranch.skillarticles.ui.base.Binding
 import kotlin.properties.ReadWriteProperty
