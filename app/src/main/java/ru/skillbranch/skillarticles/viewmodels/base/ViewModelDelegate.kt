@@ -7,12 +7,18 @@ import androidx.lifecycle.ViewModelProviders
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class ViewModelDelegate<T : ViewModel>(
-    private val clazz: Class<T>,
-    private val arg: Any?
-) : ReadOnlyProperty<FragmentActivity, T> {
+class ViewModelDelegate<T : ViewModel>(private val clazz: Class<T>, private val arg: Any?) :
+    ReadOnlyProperty<FragmentActivity, T> {
+
     override fun getValue(thisRef: FragmentActivity, property: KProperty<*>): T {
-        val vm = clazz.getConstructor(arg?.javaClass).newInstance(arg)
-        return ViewModelProviders.of(thisRef, vm as ViewModelProvider.Factory).get(clazz)
+        val vmFactory = BaseViewModelFactory(arg)
+        return ViewModelProviders.of(thisRef, vmFactory).get(clazz)
+    }
+}
+
+class BaseViewModelFactory(private val params: Any?) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val constr = modelClass.getConstructor(params?.javaClass)
+        return constr.newInstance(params)
     }
 }
