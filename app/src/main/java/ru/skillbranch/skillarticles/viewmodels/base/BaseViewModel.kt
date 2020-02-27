@@ -95,30 +95,36 @@ class Event<out E> (private val content: E){
     fun peekContent(): E = content
 }
 
+/***
+ * в качестве аргумента конструктора принимает лямбда выражение обработчик в аргумент которой передается
+ * необработанное ранее событие получаемое в реализации метода Observer`a onChanged
+ */
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit): Observer<Event<E>>{
 //    в качестве аргумента принимает лямбда обработчик в котороую передается необработанное ранее событие
 //    получаемое в реализации метода Observer`a onChanged
-    override fun onChanged(event: Event<E>?) {
+override fun onChanged(event: Event<E>?) {
 //        если есть необработанное событие (контент) передай в качестве аргумента в лямбду
 //        onEventUnhandledContent
-        event?.getContentIfNotHandled()?.let {
-            onEventUnhandledContent(it)
-        }
+    event?.getContentIfNotHandled()?.let {
+        onEventUnhandledContent(it)
     }
 }
+}
 
-sealed class Notify(val message: String) {
-    data class TextMessage(val msg: String): Notify(msg)
+sealed class Notify {
+    abstract val message: String
+
+    data class TextMessage(override val message: String) : Notify()
 
     data class ActionMessage(
-        val msg: String,
+        override val message: String,
         val actionLabel: String,
         val actionHandler: (() -> Unit)
-    ) : Notify(msg)
+    ) : Notify()
 
     data class ErrorMessage(
-        val msg: String,
+        override val message: String,
         val errLabel: String?,
         val errHandler: (() -> Unit)?
-    ) : Notify(msg)
+    ) : Notify()
 }
