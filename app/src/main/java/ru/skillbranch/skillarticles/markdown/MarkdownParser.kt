@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 
 object MarkdownParser {
 
-    private val LINE_SEPARATOR = "\n"
+    private val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
 
     //group regex
     private const val UNORDERED_LIST_ITEM_GROUP = "" //TODO implement me
@@ -30,7 +30,9 @@ object MarkdownParser {
      * parse markdown text to elements
      */
     fun parse(string: String): MarkdownText {
-        //TODO implement me
+        val elements = mutableListOf<Element>()
+        elements.addAll(findElements(string))
+        return MarkdownText(elements)
     }
 
     /**
@@ -44,7 +46,9 @@ object MarkdownParser {
      * find markdown elements in markdown text
      */
     private fun findElements(string: CharSequence): List<Element> {
-        //TODO implement me
+        val parents = mutableListOf<Element>()
+        val matcher = elementsPattern.matcher(string)
+        var lastIndex = 0
 
         loop@ while () {
             //TODO implement me
