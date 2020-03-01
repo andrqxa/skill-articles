@@ -14,15 +14,15 @@ object MarkdownParser {
     private const val BOLD_GROUP =
         "((?<!\\*)\\*{2}[^*].*?[^*]?\\*{2}(?!\\*)|(?<!_)_{2}[^_].*?[^_]?_{2}(?!_))"
     private const val STRIKE_GROUP = "((?<!~)~{2}[^~].*?[^~]?~{2}(?!~))"
-//    private const val RULE_GROUP = "" //TODO implement me
-//    private const val INLINE_GROUP = "" //TODO implement me
-//    private const val LINK_GROUP = "" //TODO implement me
+    private const val RULE_GROUP = "(^_{3}|-{3}|\\*{3}$)"
+    private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
+    private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
 //    private const val BLOCK_CODE_GROUP = "" //TODO implement me
 //    private const val ORDER_LIST_GROUP = "" //TODO implement me
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP"
+            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
 //    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
 //            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
     //|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP optionally
@@ -67,7 +67,7 @@ object MarkdownParser {
             var text: CharSequence
 
             //groups range for iterate by groups (1..9) or (1..11) optionally
-            val groups = 1..6
+            val groups = 1..9
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -165,19 +165,39 @@ object MarkdownParser {
                 //RULE
                 7 -> {
                     //text without "***" insert empty character
-                    //TODO implement me
+                    val element = Element.Rule()
+                    parents.add(element)
+
+                    // next find start from position "endIndex" (last regex character)
+                    lastStartIndex = endIndex
                 }
 
-                //RULE
+                //INLINE CODE
                 8 -> {
                     //text without "`{}`"
-                    //TODO implement me
+                    text = string.subSequence(startIndex.inc(), endIndex.dec())
+
+                    // find inner elements
+                    val subs = findElements(text)
+                    val element = Element.InlineCode(text, subs)
+                    parents.add(element)
+
+                    // next find start from position "endIndex" (last regex character)
+                    lastStartIndex = endIndex
                 }
 
                 //LINK
                 9 -> {
                     //full text for regex
-                    //TODO implement me
+                    text = string.subSequence(startIndex, endIndex)
+                    // find inner elements
+                    val (title: String, link: String) = "\\[(.*)]\\((.*)\\)".toRegex().find(text)!!.destructured
+
+                    val element = Element.Link(link, title)
+                    parents.add(element)
+
+                    // next find start from position "endIndex" (last regex character)
+                    lastStartIndex = endIndex
                 }
                 //10 -> BLOCK CODE - optionally
                 10 -> {
