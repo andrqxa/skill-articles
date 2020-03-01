@@ -24,9 +24,11 @@ class MarkdownBuilder(context: Context) {
 
     fun markdownToSpan(string: String): SpannedString {
         //TODO implement me
+        return SpannedString("")
     }
 
     private fun buildElement(element: Element, builder: SpannableStringBuilder): CharSequence {
         //TODO implement me
+        return ""
     }
 }

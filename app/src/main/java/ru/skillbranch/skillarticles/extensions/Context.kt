@@ -37,3 +37,7 @@ val Context.isNetworkAvailable: Boolean
             cm.activeNetworkInfo?.run { isConnectedOrConnecting } ?: false
         }
     }
+
+fun Context.attrValue(colorSecondary: Int): Any {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}

@@ -7,21 +7,22 @@ object MarkdownParser {
     private val LINE_SEPARATOR = System.getProperty("line.separator") ?: "\n"
 
     //group regex
-    private const val UNORDERED_LIST_ITEM_GROUP = "" //TODO implement me
-    private const val HEADER_GROUP = "" //TODO implement me
-    private const val QUOTE_GROUP = "" //TODO implement me
-    private const val ITALIC_GROUP = "" //TODO implement me
-    private const val BOLD_GROUP = "" //TODO implement me
-    private const val STRIKE_GROUP = "" //TODO implement me
-    private const val RULE_GROUP = "" //TODO implement me
-    private const val INLINE_GROUP = "" //TODO implement me
-    private const val LINK_GROUP = "" //TODO implement me
-    private const val BLOCK_CODE_GROUP = "" //TODO implement me
-    private const val ORDER_LIST_GROUP = "" //TODO implement me
+    private const val UNORDERED_LIST_ITEM_GROUP = "(^[*+-] .+$)"
+    private const val HEADER_GROUP = "(^#{1,6} .+?\$)"
+//    private const val QUOTE_GROUP = "" //TODO implement me
+//    private const val ITALIC_GROUP = "" //TODO implement me
+//    private const val BOLD_GROUP = "" //TODO implement me
+//    private const val STRIKE_GROUP = "" //TODO implement me
+//    private const val RULE_GROUP = "" //TODO implement me
+//    private const val INLINE_GROUP = "" //TODO implement me
+//    private const val LINK_GROUP = "" //TODO implement me
+//    private const val BLOCK_CODE_GROUP = "" //TODO implement me
+//    private const val ORDER_LIST_GROUP = "" //TODO implement me
 
     //result regex
-    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
+    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP"
+//    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
+//            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
     //|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP optionally
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
@@ -40,6 +41,7 @@ object MarkdownParser {
      */
     fun clear(string: String?): String? {
         //TODO implement me
+        return null
     }
 
     /**
@@ -48,26 +50,58 @@ object MarkdownParser {
     private fun findElements(string: CharSequence): List<Element> {
         val parents = mutableListOf<Element>()
         val matcher = elementsPattern.matcher(string)
-        var lastIndex = 0
+        var lastStartIndex = 0
 
-        loop@ while () {
-            //TODO implement me
+        loop@ while (matcher.find(lastStartIndex)) {
+            val startIndex = matcher.start()
+            val endIndex = matcher.end()
+
+            // if something is found then everything before - TEXT
+            if (lastStartIndex < startIndex) {
+                parents.add(Element.Text(string.subSequence(lastStartIndex, startIndex)))
+            }
+
+            // found text
+            var text: CharSequence
+
             //groups range for iterate by groups (1..9) or (1..11) optionally
-            val groups = 1..11
-            when () {
+            val groups = 1..2
+            var group = -1
+            for (gr in groups) {
+                if (matcher.group(gr) != null) {
+                    group = gr
+                    break
+                }
+            }
+
+            when (group) {
                 //NOT FOUND -> BREAK
                 -1 -> break@loop
 
                 //UNORDERED LIST
                 1 -> {
                     //text without "*. "
-                    //TODO implement me
+                    text = string.subSequence(startIndex.plus(2), endIndex)
+
+                    // find inner elements
+                    val subs = findElements(text)
+                    val element = Element.UnorderedListItem(text, subs)
+                    parents.add(element)
+
+                    // next find start from position "endIndex" (last regex character)
+                    lastStartIndex = endIndex
                 }
 
                 //HEADER
                 2 -> {
                     //text without "{#} "
-                    //TODO implement me
+                    val reg = "^#{1,6}".toRegex().find(string.subSequence(startIndex, endIndex))
+                    val level = reg!!.value.length
+
+                    text = string.subSequence(startIndex.plus(level.inc()), endIndex)
+                    val element = Element.Header(level, text)
+                    parents.add(element)
+                    lastStartIndex = endIndex
                 }
 
                 //QUOTE
@@ -124,7 +158,11 @@ object MarkdownParser {
 
         }
 
-        //TODO implement me
+        if (lastStartIndex < string.length) {
+            val text = string.subSequence(lastStartIndex, string.length)
+            parents.add(Element.Text(text))
+        }
+        return parents
     }
 }
 
@@ -199,4 +237,5 @@ sealed class Element {
     ) : Element() {
         enum class Type { START, END, MIDDLE, SINGLE }
     }
+
 }
