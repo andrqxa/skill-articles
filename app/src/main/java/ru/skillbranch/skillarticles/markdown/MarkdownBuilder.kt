@@ -3,9 +3,12 @@ package ru.skillbranch.skillarticles.markdown
 import android.content.Context
 import android.text.SpannableStringBuilder
 import android.text.SpannedString
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToPx
+import ru.skillbranch.skillarticles.markdown.spans.UnorderedListSpan
 
 class MarkdownBuilder(context: Context) {
     private val colorSecondary = context.attrValue(R.attr.colorSecondary)
@@ -23,12 +26,24 @@ class MarkdownBuilder(context: Context) {
     private val linkIcon = context.getDrawable(R.drawable.ic_link_black_24dp)!!
 
     fun markdownToSpan(string: String): SpannedString {
-        //TODO implement me
-        return SpannedString("")
+        val markdown = MarkdownParser.parse(string)
+        return buildSpannedString {
+            markdown.elements.forEach { buildElement(it, this) }
+        }
     }
 
     private fun buildElement(element: Element, builder: SpannableStringBuilder): CharSequence {
-        //TODO implement me
-        return ""
+        return builder.apply {
+            when (element) {
+                is Element.Text -> append(element.text)
+                is Element.UnorderedListItem -> {
+                    inSpans(UnorderedListSpan(gap, bulletRadius, colorSecondary)) {
+                        for (child in element.elements) {
+                            buildElement(child, builder)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

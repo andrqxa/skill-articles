@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.extensions
 
 import android.content.Context
+import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -38,6 +39,12 @@ val Context.isNetworkAvailable: Boolean
         }
     }
 
-fun Context.attrValue(colorSecondary: Int): Any {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+fun Context.attrValue(res: Int): Int {
+    var value: Int? = null
+    if (value == null) {
+        val tv = TypedValue()
+        if (this.theme.resolveAttribute(res, tv, true)) value = tv.data
+        else throw Resources.NotFoundException("Resource with id $res not found")
+    }
+    return value
 }

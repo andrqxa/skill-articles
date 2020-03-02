@@ -18,8 +18,7 @@ class UnorderedListSpan(
 ) : LeadingMarginSpan {
 
     override fun getLeadingMargin(first: Boolean): Int {
-        //TODO implement me
-        return 0
+        return (4 * bulletRadius + gapWidth).toInt()
     }
 
     override fun drawLeadingMargin(
