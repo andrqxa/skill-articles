@@ -6,6 +6,7 @@ import android.text.SpannableStringBuilder
 import android.text.SpannedString
 import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
+import android.text.style.URLSpan
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import ru.skillbranch.skillarticles.R
@@ -101,7 +102,14 @@ class MarkdownBuilder(context: Context) {
                         append(element.text)
                     }
                 }
-
+                is Element.Link -> {
+                    inSpans(
+                        IconLinkSpan(linkIcon, colorSecondary, gap, colorPrimary, strikeWidth),
+                        URLSpan(element.link)
+                    ) {
+                        append(element.text)
+                    }
+                }
                 else -> append(element.text)
             }
         }
