@@ -11,9 +11,7 @@ import androidx.core.text.inSpans
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToPx
-import ru.skillbranch.skillarticles.markdown.spans.BlockquotesSpan
-import ru.skillbranch.skillarticles.markdown.spans.HeaderSpan
-import ru.skillbranch.skillarticles.markdown.spans.UnorderedListSpan
+import ru.skillbranch.skillarticles.markdown.spans.*
 
 class MarkdownBuilder(context: Context) {
     private val colorSecondary = context.attrValue(R.attr.colorSecondary)
@@ -93,6 +91,17 @@ class MarkdownBuilder(context: Context) {
                         }
                     }
                 }
+                is Element.Rule -> {
+                    inSpans(HorizontalRuleSpan(ruleWidth, colorDivider)) {
+                        append(element.text)
+                    }
+                }
+                is Element.InlineCode -> {
+                    inSpans(InlineCodeSpan(colorOnSurface, colorSurface, cornerRadius, gap)) {
+                        append(element.text)
+                    }
+                }
+
                 else -> append(element.text)
             }
         }
