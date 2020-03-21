@@ -17,7 +17,7 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^_{3}|-{3}|\\*{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
-    private const val BLOCK_CODE_GROUP = "(^`{3}[\\s\\S]+?`{3}$)"
+    private const val BLOCK_CODE_GROUP = "(^```[\\s\\S]+?```$)"
     private const val ORDER_LIST_GROUP = "(^[\\d]{1,2}\\.\\s.+?$)"
 
     //result regex
@@ -200,7 +200,7 @@ object MarkdownParser {
                 10 -> {
                     text = string.subSequence(startIndex.plus(3), endIndex.minus(3)).toString()
 
-                    if (!text.contains(LINE_SEPARATOR)) {
+                    if (text.contains(LINE_SEPARATOR)) {
                         for ((index, line) in text.lines().withIndex()) {
                             when (index) {
                                 text.lines().lastIndex -> parents.add(
