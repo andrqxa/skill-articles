@@ -18,7 +18,7 @@ object MarkdownParser {
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
     private const val BLOCK_CODE_GROUP = "(^`{3}[\\s\\S]+?`{3}$)"
-    private const val ORDER_LIST_GROUP = "(^[\\d]. .+$)"
+    private const val ORDER_LIST_GROUP = "(^[\\d]{1,2}\\.\\s.+?$)"
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP|" +
@@ -198,47 +198,47 @@ object MarkdownParser {
                 }
                 //10 -> BLOCK CODE - optionally
                 10 -> {
-                    text = string.subSequence(startIndex, endIndex)
+                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3)).toString()
 
-                    if (!text.contains("\n")) {
-                        val element = Element.BlockCode(
-                            Element.BlockCode.Type.SINGLE,
-                            text.subSequence(3, text.length - 3)
-                        )
-                        parents.add(element)
-                    } else {
-                        val startRegex = "^`{3}".toRegex()
-                        val endRegex = "`{3}$".toRegex()
-                        text.split("\n").forEach {
-                            val element = when {
-                                startRegex.find(it) != null -> {
-                                    Element.BlockCode(
-                                        Element.BlockCode.Type.START,
-                                        it.substring(3) + "\n"
-                                    )
-                                }
-                                endRegex.find(it) != null -> {
+                    if (!text.contains(LINE_SEPARATOR)) {
+                        for ((index, line) in text.lines().withIndex()) {
+                            when (index) {
+                                text.lines().lastIndex -> parents.add(
                                     Element.BlockCode(
                                         Element.BlockCode.Type.END,
-                                        it.substring(0, it.length - 3)
+                                        line
                                     )
-                                }
-                                else -> Element.BlockCode(Element.BlockCode.Type.MIDDLE, it + "\n")
+                                )
+                                0 -> parents.add(
+                                    Element.BlockCode(
+                                        Element.BlockCode.Type.START,
+                                        line + LINE_SEPARATOR
+                                    )
+                                )
+                                else -> parents.add(
+                                    Element.BlockCode(
+                                        Element.BlockCode.Type.MIDDLE,
+                                        line
+                                    )
+                                )
                             }
-                            parents.add(element)
                         }
-                    }
+                    } else parents.add(Element.BlockCode(Element.BlockCode.Type.SINGLE, text))
 
                     lastStartIndex = endIndex
                 }
 
                 //11 -> NUMERIC LIST
                 11 -> {
-                    val order = "^[\\d].".toRegex().find(string.subSequence(startIndex, endIndex))
+                    val reg =
+                        "^[\\d{1,2}.].".toRegex().find(string.subSequence(startIndex, endIndex))
+                    val order = reg!!.value
 
-                    text = string.subSequence(startIndex + order!!.value.length + 1, endIndex)
+                    text =
+                        string.subSequence(startIndex.plus(order.length.inc()), endIndex).toString()
 
-                    val element = Element.OrderedListItem(order.value, text)
+                    val subs = findElements(text)
+                    val element = Element.OrderedListItem(order, text.toString(), subs)
                     parents.add(element)
 
                     lastStartIndex = endIndex
