@@ -218,7 +218,7 @@ object MarkdownParser {
                                 else -> parents.add(
                                     Element.BlockCode(
                                         Element.BlockCode.Type.MIDDLE,
-                                        line
+                                        line + LINE_SEPARATOR
                                     )
                                 )
                             }
