@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.text.Spannable
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
 
 @SuppressLint("ViewConstructor")
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

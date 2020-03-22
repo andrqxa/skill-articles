@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import androidx.annotation.ColorInt
+import androidx.annotation.VisibleForTesting
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 
 @SuppressLint("ViewConstructor")
