@@ -12,6 +12,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.text.getSpans
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.*
+import ru.skillbranch.skillarticles.ui.custom.spans.HeaderSpan
 import ru.skillbranch.skillarticles.ui.custom.spans.SearchSpan
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -107,8 +108,8 @@ class SearchBgHelper(
 
     private lateinit var spans: Array<out SearchSpan>
 
-    //    private lateinit var headerSpans: Array<out HeaderSpan>
-//
+    private lateinit var headerSpans: Array<out HeaderSpan>
+
     private var spanStart = 0
     private var spanEnd = 0
     private var startLine = 0
@@ -133,18 +134,23 @@ class SearchBgHelper(
 //                focusListener.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
 //            }
 //
-//            headerSpans = text.getSpans(spanStart, spanEnd, HeaderSpan::class.java)
-//
-//            topExtraPadding = 0
-//            bottomExtraPadding = 0
-//
-//            if (headerSpans.isNotEmpty()) {
-//                topExtraPadding =
-//                    if (spanStart in headerSpans[0].firstLineBounds
-//                        || spanEnd in headerSpans[0].firstLineBounds
-//                    ) headerSpans[0].topExtraPadding else 0
-//            }
-//
+            headerSpans = text.getSpans(spanStart, spanEnd, HeaderSpan::class.java)
+
+            topExtraPadding = 0
+            bottomExtraPadding = 0
+
+            if (headerSpans.isNotEmpty()) {
+                topExtraPadding =
+                    if (spanStart in headerSpans[0].firstLineBounds
+                        || spanEnd in headerSpans[0].firstLineBounds
+                    ) headerSpans[0].topExtraPadding else 0
+
+                bottomExtraPadding =
+                    if (spanStart in headerSpans[0].lastLineBounds
+                        || spanEnd in headerSpans[0].lastLineBounds
+                    ) headerSpans[0].bottomExtraPadding else 0
+            }
+
             startOffset = layout.getPrimaryHorizontal(spanStart).toInt()
             endOffset = layout.getPrimaryHorizontal(spanEnd).toInt()
 

@@ -37,9 +37,10 @@ class MarkdownTextView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : TextView(context, attrs, defStyleAttr) {
-    private val searchBgHelper = SearchBgHelper(context) {
-        //TODO implement me
-    }
+    private val searchBgHelper = SearchBgHelper(context, null)
+//    private val searchBgHelper = SearchBgHelper(context) {
+//        //TODO implement me
+//    }
 
     override fun onDraw(canvas: Canvas) {
         if (text is Spanned && layout != null) {
