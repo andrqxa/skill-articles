@@ -2,26 +2,31 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.children
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
+import kotlin.properties.Delegates
 
-//class MarkdownContentView
 class MarkdownContentView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private lateinit var elements: List<MarkdownElement>
-    private val children: MutableList<View> = mutableListOf()
 
     //for restore
     private var ids = arrayListOf<Int>()
 
-    var textSize = 14f
+    var textSize by Delegates.observable(14f) { _, old, value ->
+        if (value == old) return@observable
+        this.children.forEach {
+            it as IMarkdownView
+            it.fontSize = value
+        }
+    }
     var isLoading: Boolean = true
     val padding = context.dpToIntPx(8) //8dp
 
