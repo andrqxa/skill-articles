@@ -66,14 +66,14 @@ object MarkdownParser {
         }
     }
 
-    /**
-     * clear markdown text to string without markdown characters
-     */
-    fun clear(string: String?): String? {
-        return clearElements(
-            string
-        )
-    }
+//    /**
+//     * clear markdown text to string without markdown characters
+//     */
+//    fun clear(string: String?): String? {
+//        return clearElements(
+//            string
+//        )
+//    }
 
     /**
      * find markdown elements in markdown text
@@ -318,7 +318,9 @@ object MarkdownParser {
                     val (alt, url, title) = "^\\[([^\\[\\]]*?)?]\\((.*?) \"(.*?)\"\\)$".toRegex()
                         .find(text)!!.destructured
 
-                    val element = Element.Image(url, alt, text)
+                    val element = Element.Image(url, if (alt.isBlank()) null else alt, title)
+                    parents.add(element)
+                    lastStartIndex = endIndex
                 }
             }
 
@@ -335,173 +337,173 @@ object MarkdownParser {
         return parents
     }
 
-    private fun clearElements(string: CharSequence?): String? {
-        if (string == null) {
-            return null
-        }
-
-        val builder = StringBuilder()
-        val matcher = elementsPattern.matcher(string)
-        var lastStartIndex = 0
-
-        loop@ while (matcher.find(lastStartIndex)) {
-            val startIndex = matcher.start()
-            val endIndex = matcher.end()
-
-            if (lastStartIndex < startIndex) {
-                builder.append(string.subSequence(lastStartIndex, startIndex))
-            }
-
-            var text: CharSequence
-
-            //groups range for iterate by groups (1..9) or (1..11) optionally
-            val groups = 1..11
-            var group = -1
-            for (gr in groups) {
-                if (matcher.group(gr) != null) {
-                    group = gr
-                    break
-                }
-            }
-
-            when (group) {
-                //NOT FOUND -> BREAK
-                -1 -> break@loop
-
-                //UNORDERED LIST
-                1 -> {
-                    //text without "*. "
-                    text = string.subSequence(startIndex.plus(2), endIndex)
-
-                    val subs =
-                        clearElements(
-                            text
-                        )
-                    builder.append(subs)
-
-                    lastStartIndex = endIndex
-                }
-
-                //HEADER
-                2 -> {
-                    //text without "{#} "
-                    val reg = "^#{1,6}".toRegex().find(string.subSequence(startIndex, endIndex))
-                    val level = reg!!.value.length
-
-                    text = string.subSequence(startIndex.plus(level.inc()), endIndex)
-                    builder.append(text)
-
-                    lastStartIndex = endIndex
-                }
-
-                //QUOTE
-                3 -> {
-                    //text without "> "
-                    text = string.subSequence(startIndex.plus(2), endIndex)
-
-                    val subs =
-                        clearElements(
-                            text
-                        )
-                    builder.append(subs)
-
-                    lastStartIndex = endIndex
-                }
-
-                //ITALIC
-                4 -> {
-                    //text without "*{}*"
-                    text = string.subSequence(startIndex.inc(), endIndex.dec())
-
-                    val subs =
-                        clearElements(
-                            text
-                        )
-                    builder.append(subs)
-
-                    lastStartIndex = endIndex
-                }
-
-                //BOLD
-                5 -> {
-                    //text without "**{}**"
-                    text = string.subSequence(startIndex.plus(2), endIndex.minus(2))
-
-                    val subs =
-                        clearElements(
-                            text
-                        )
-                    builder.append(subs)
-
-                    lastStartIndex = endIndex
-                }
-
-                //STRIKE
-                6 -> {
-                    //text without "~~{}~~"
-                    text = string.subSequence(startIndex.plus(2), endIndex.minus(2))
-
-                    val subs =
-                        clearElements(
-                            text
-                        )
-                    builder.append(subs)
-
-                    lastStartIndex = endIndex
-                }
-
-                //RULE
-                7 -> {
-                    //text without "***" insert empty character
-                    builder.append(" ")
-                    lastStartIndex = endIndex
-                }
-
-                //INLINE
-                8 -> {
-                    //text without "`{}`"
-                    text = string.subSequence(startIndex.inc(), endIndex.dec())
-                    builder.append(text)
-                    lastStartIndex = endIndex
-                }
-
-                //LINK
-                9 -> {
-                    //full text for regex
-                    text = string.subSequence(startIndex, endIndex)
-                    val (title: String, link: String) = "\\[(.*)]\\((.*)\\)".toRegex()
-                        .find(text)!!.destructured
-                    builder.append(title)
-
-                    lastStartIndex = endIndex
-                }
-                //10 -> BLOCK CODE - optionally
-                10 -> {
-                    text = string.subSequence(startIndex + 3, endIndex - 3)
-                    builder.append(text)
-                    lastStartIndex = endIndex
-                }
-
-                //11 -> NUMERIC LIST
-                11 -> {
-                    val order = "^[\\d]".toRegex().find(string.subSequence(startIndex, endIndex))
-                    text = string.subSequence(startIndex + order!!.value.length + 2, endIndex)
-                    builder.append(text)
-                    lastStartIndex = endIndex
-                }
-            }
-
-        }
-
-        if (lastStartIndex < string.length) {
-            builder.append(string.subSequence(lastStartIndex, string.length))
-        }
-
-        return builder.toString()
-    }
+//    private fun clearElements(string: CharSequence?): String? {
+//        if (string == null) {
+//            return null
+//        }
+//
+//        val builder = StringBuilder()
+//        val matcher = elementsPattern.matcher(string)
+//        var lastStartIndex = 0
+//
+//        loop@ while (matcher.find(lastStartIndex)) {
+//            val startIndex = matcher.start()
+//            val endIndex = matcher.end()
+//
+//            if (lastStartIndex < startIndex) {
+//                builder.append(string.subSequence(lastStartIndex, startIndex))
+//            }
+//
+//            var text: CharSequence
+//
+//            //groups range for iterate by groups (1..9) or (1..11) optionally
+//            val groups = 1..11
+//            var group = -1
+//            for (gr in groups) {
+//                if (matcher.group(gr) != null) {
+//                    group = gr
+//                    break
+//                }
+//            }
+//
+//            when (group) {
+//                //NOT FOUND -> BREAK
+//                -1 -> break@loop
+//
+//                //UNORDERED LIST
+//                1 -> {
+//                    //text without "*. "
+//                    text = string.subSequence(startIndex.plus(2), endIndex)
+//
+//                    val subs =
+//                        clearElements(
+//                            text
+//                        )
+//                    builder.append(subs)
+//
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //HEADER
+//                2 -> {
+//                    //text without "{#} "
+//                    val reg = "^#{1,6}".toRegex().find(string.subSequence(startIndex, endIndex))
+//                    val level = reg!!.value.length
+//
+//                    text = string.subSequence(startIndex.plus(level.inc()), endIndex)
+//                    builder.append(text)
+//
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //QUOTE
+//                3 -> {
+//                    //text without "> "
+//                    text = string.subSequence(startIndex.plus(2), endIndex)
+//
+//                    val subs =
+//                        clearElements(
+//                            text
+//                        )
+//                    builder.append(subs)
+//
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //ITALIC
+//                4 -> {
+//                    //text without "*{}*"
+//                    text = string.subSequence(startIndex.inc(), endIndex.dec())
+//
+//                    val subs =
+//                        clearElements(
+//                            text
+//                        )
+//                    builder.append(subs)
+//
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //BOLD
+//                5 -> {
+//                    //text without "**{}**"
+//                    text = string.subSequence(startIndex.plus(2), endIndex.minus(2))
+//
+//                    val subs =
+//                        clearElements(
+//                            text
+//                        )
+//                    builder.append(subs)
+//
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //STRIKE
+//                6 -> {
+//                    //text without "~~{}~~"
+//                    text = string.subSequence(startIndex.plus(2), endIndex.minus(2))
+//
+//                    val subs =
+//                        clearElements(
+//                            text
+//                        )
+//                    builder.append(subs)
+//
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //RULE
+//                7 -> {
+//                    //text without "***" insert empty character
+//                    builder.append(" ")
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //INLINE
+//                8 -> {
+//                    //text without "`{}`"
+//                    text = string.subSequence(startIndex.inc(), endIndex.dec())
+//                    builder.append(text)
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //LINK
+//                9 -> {
+//                    //full text for regex
+//                    text = string.subSequence(startIndex, endIndex)
+//                    val (title: String, link: String) = "\\[(.*)]\\((.*)\\)".toRegex()
+//                        .find(text)!!.destructured
+//                    builder.append(title)
+//
+//                    lastStartIndex = endIndex
+//                }
+//                //10 -> BLOCK CODE - optionally
+//                10 -> {
+//                    text = string.subSequence(startIndex + 3, endIndex - 3)
+//                    builder.append(text)
+//                    lastStartIndex = endIndex
+//                }
+//
+//                //11 -> NUMERIC LIST
+//                11 -> {
+//                    val order = "^[\\d]".toRegex().find(string.subSequence(startIndex, endIndex))
+//                    text = string.subSequence(startIndex + order!!.value.length + 2, endIndex)
+//                    builder.append(text)
+//                    lastStartIndex = endIndex
+//                }
+//            }
+//
+//        }
+//
+//        if (lastStartIndex < string.length) {
+//            builder.append(string.subSequence(lastStartIndex, string.length))
+//        }
+//
+//        return builder.toString()
+//    }
 }
 
-data class MarkdownText(val elements: List<Element>)
+//data class MarkdownText(val elements: List<Element>)
 
 sealed class MarkdownElement {
     abstract val offset: Int

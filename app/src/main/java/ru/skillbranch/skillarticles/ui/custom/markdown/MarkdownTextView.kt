@@ -12,8 +12,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.withTranslation
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
+import ru.skillbranch.skillarticles.extensions.dpToIntPx
 
-@SuppressLint("ViewConstructor")
+@SuppressLint("ViewConstructor", "AppCompatCustomView")
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class MarkdownTextView constructor(
     context: Context,
@@ -24,7 +25,7 @@ class MarkdownTextView constructor(
     constructor(context: Context, fontSize: Float) : this(context, fontSize, null)
 
     override var fontSize: Float = fontSize
-        get() = TODO("not implemented")
+        //        get() = TODO("not implemented")
         set(value) {
             textSize = value
             field = value
@@ -36,11 +37,14 @@ class MarkdownTextView constructor(
     private val color = context.attrValue(R.attr.colorOnBackground)
     private val focusRect = Rect()
 
-    private val searchBgHelper = SearchBgHelper(context) { top, bottom ->
-        //TODO implement me
-    }
+    private val searchBgHelper: SearchBgHelper
 
     init {
+        searchBgHelper = SearchBgHelper(context) { top, bottom ->
+            focusRect.set(0, top - context.dpToIntPx(56), width, bottom + context.dpToIntPx(56))
+            // show rect on view with animation
+            requestRectangleOnScreen(focusRect, false)
+        }
         setTextColor(color)
         textSize = fontSize
         movementMethod = LinkMovementMethod.getInstance()
@@ -54,24 +58,4 @@ class MarkdownTextView constructor(
         }
         super.onDraw(canvas)
     }
-}
-//@SuppressLint("ViewConstructor", "AppCompatCustomView")
-//class MarkdownTextView @JvmOverloads constructor(
-//    context: Context,
-//    attrs: AttributeSet? = null,
-//    defStyleAttr: Int = 0
-//) : TextView(context, attrs, defStyleAttr) {
-//    private val searchBgHelper = SearchBgHelper(context, null)
-//    private val searchBgHelper = SearchBgHelper(context) {
-//        //TODO implement me
-//    }
-//
-//    override fun onDraw(canvas: Canvas) {
-//        if (text is Spanned && layout != null) {
-//            canvas.withTranslation(totalPaddingLeft.toFloat(), totalPaddingRight.toFloat()) {
-//                searchBgHelper.draw(canvas, text as Spanned, layout)
-//            }
-//        }
-//        super.onDraw(canvas)
-//    }
 }

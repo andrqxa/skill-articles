@@ -2,11 +2,13 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.children
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
+import ru.skillbranch.skillarticles.extensions.groupByBounds
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 import kotlin.properties.Delegates
 
@@ -31,12 +33,43 @@ class MarkdownContentView @JvmOverloads constructor(
     val padding = context.dpToIntPx(8) //8dp
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        //TODO implement me
+        var usedHeight = paddingTop
+        val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
+
+        children.forEach {
+            measureChild(it, widthMeasureSpec, heightMeasureSpec)
+            usedHeight += it.measuredHeight
+        }
+
+        usedHeight += paddingBottom
+        setMeasuredDimension(width, usedHeight)
     }
 
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        //TODO implement me
+        var usedHeight = paddingTop
+        val bodyWidth = right - left - paddingLeft - paddingRight
+        val left = paddingLeft
+        val right = paddingLeft + bodyWidth
+
+        children.forEach {
+            if (it is MarkdownTextView) {
+                it.layout(
+                    left - paddingLeft / 2,
+                    usedHeight,
+                    r - paddingRight / 2,
+                    usedHeight + it.measuredHeight
+                )
+            } else {
+                it.layout(
+                    left,
+                    usedHeight,
+                    right,
+                    usedHeight + it.measuredHeight
+                )
+            }
+            usedHeight += it.measuredHeight
+        }
     }
 
     fun setContent(content: List<MarkdownElement>) {
@@ -57,25 +90,74 @@ class MarkdownContentView @JvmOverloads constructor(
 
                     addView(tv)
                 }
+                is MarkdownElement.Image -> {
+                    val iv = MarkdownImageView(
+                        context,
+                        textSize,
+                        it.image.url,
+                        it.image.text,
+                        it.image.alt
+                    )
+                    addView(iv)
+                }
+                is MarkdownElement.Scroll -> {
+                    val sv = MarkdownCodeView(
+                        context,
+                        textSize,
+                        it.blockCode.text
+                    )
+                    addView(sv)
+                }
             }
         }
     }
 
     fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
-        //TODO implement me
+        children.forEach { view ->
+            view as IMarkdownView
+            view.clearSearchResult()
+        }
+
+        if (searchResult.isEmpty()) return
+
+        val bounds = elements.map { it.bounds }
+        val result = searchResult.groupByBounds(bounds)
+
+        children.forEachIndexed { index, view ->
+            view as IMarkdownView
+            view.renderSearchResult(result[index], elements[index].offset)
+        }
     }
 
     fun renderSearchPosition(
         searchPosition: Pair<Int, Int>?
     ) {
-        //TODO implement me
+        searchPosition ?: return
+
+        val bounds = elements.map { it.bounds }
+
+        val index = bounds.indexOfFirst { (start, end) ->
+            val boundRange = start..end
+            val (startPos, endPos) = searchPosition
+            startPos in boundRange && endPos in boundRange
+        }
+
+        if (index == -1) return
+
+        val view = getChildAt(index)
+        view as IMarkdownView
+        view.renderSearchPosition(searchPosition, elements[index].offset)
     }
 
     fun clearSearchResult() {
-        //TODO implement me
+        children.forEach {
+            it as IMarkdownView
+            it.clearSearchResult()
+        }
     }
 
     fun setCopyListener(listener: (String) -> Unit) {
-        //TODO implement me
+        children.filterIsInstance<MarkdownCodeView>()
+            .forEach { it.copyListener = listener }
     }
 }

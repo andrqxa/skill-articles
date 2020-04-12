@@ -87,13 +87,13 @@ class MarkdownImageView private constructor(
     }
 
     init {
-        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         iv_image = ImageView(context).apply {
-            scaleType = ImageView.ScaleType.CENTER_CROP
-            setImageResource(R.drawable.ic_launcher_background)
+//            scaleType = ImageView.ScaleType.CENTER_CROP
+//            setImageResource(R.drawable.ic_launcher_background)
             outlineProvider = object : ViewOutlineProvider() {
-                override fun getOutline(view: View, outline: Outline?) {
-                    outline!!.setRoundRect(
+                override fun getOutline(view: View, outline: Outline) {
+                    outline.setRoundRect(
                         Rect(0, 0, view.measuredWidth, view.measuredHeight),
                         cornerRadius
                     )
@@ -104,7 +104,7 @@ class MarkdownImageView private constructor(
         addView(iv_image)
 
         tv_title = MarkdownTextView(context, fontSize * 0.75f).apply {
-            setText("title", TextView.BufferType.SPANNABLE)
+//            setText("title", TextView.BufferType.SPANNABLE)
             setTextColor(colorOnBackground)
             gravity = Gravity.CENTER
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
@@ -166,12 +166,12 @@ class MarkdownImageView private constructor(
         val ms = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
 
         iv_image.measure(ms, heightMeasureSpec)
-//        tv_title.measure(ms, heightMeasureSpec)
-        measureChild(tv_title, ms, heightMeasureSpec)
+        tv_title.measure(ms, heightMeasureSpec)
+//        measureChild(tv_title, ms, heightMeasureSpec)
         tv_alt?.measure(ms, heightMeasureSpec)
 
         usedHeight += iv_image.measuredHeight
-        usedHeight += titlePadding
+        usedHeight += titleTopMargin
         linePositionY = usedHeight + tv_title.measuredHeight / 2f
         usedHeight += tv_title.measuredHeight
 
@@ -258,7 +258,6 @@ class MarkdownImageView private constructor(
 }
 
 class AspectRatioResizeTransform : BitmapTransformation() {
-
     private val ID =
         "ru.skillbranch.skillarticles.glide.AspectRatioResizeTransform" //any unique string
     private val ID_BYTES = ID.toByteArray(Charset.forName("UTF-8"))
