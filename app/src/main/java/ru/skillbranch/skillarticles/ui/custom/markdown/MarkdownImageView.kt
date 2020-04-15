@@ -89,8 +89,6 @@ class MarkdownImageView private constructor(
     init {
         layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         iv_image = ImageView(context).apply {
-//            scaleType = ImageView.ScaleType.CENTER_CROP
-//            setImageResource(R.drawable.ic_launcher_background)
             outlineProvider = object : ViewOutlineProvider() {
                 override fun getOutline(view: View, outline: Outline) {
                     outline.setRoundRect(
@@ -104,7 +102,6 @@ class MarkdownImageView private constructor(
         addView(iv_image)
 
         tv_title = MarkdownTextView(context, fontSize * 0.75f).apply {
-//            setText("title", TextView.BufferType.SPANNABLE)
             setTextColor(colorOnBackground)
             gravity = Gravity.CENTER
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
@@ -140,15 +137,14 @@ class MarkdownImageView private constructor(
                 setPadding(titleTopMargin)
                 isVisible = false
             }
-        }
+            addView(tv_alt)
 
-        addView(tv_alt)
-
-        iv_image.setOnClickListener {
-            if (tv_alt?.isVisible == true) {
-                animateHideAlt()
-            } else {
-                animateShowAlt()
+            iv_image.setOnClickListener {
+                if (tv_alt?.isVisible == true) {
+                    animateHideAlt()
+                } else {
+                    animateShowAlt()
+                }
             }
         }
     }
@@ -167,7 +163,6 @@ class MarkdownImageView private constructor(
 
         iv_image.measure(ms, heightMeasureSpec)
         tv_title.measure(ms, heightMeasureSpec)
-//        measureChild(tv_title, ms, heightMeasureSpec)
         tv_alt?.measure(ms, heightMeasureSpec)
 
         usedHeight += iv_image.measuredHeight

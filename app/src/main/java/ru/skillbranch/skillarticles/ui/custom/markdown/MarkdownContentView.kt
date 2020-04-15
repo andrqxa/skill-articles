@@ -125,6 +125,7 @@ class MarkdownContentView @JvmOverloads constructor(
 
         children.forEachIndexed { index, view ->
             view as IMarkdownView
+            // search for child with markdown element offset
             view.renderSearchResult(result[index], elements[index].offset)
         }
     }

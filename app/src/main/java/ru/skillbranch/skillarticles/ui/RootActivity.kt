@@ -189,48 +189,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         }
     }
 
-//    override fun renderSearchResult(searchResult: List<Pair<Int, Int>>) {
-//        val content = tv_text_content.text as Spannable
-//
-//        // clear entry search result
-//        clearSearchResult()
-//
-//        searchResult.forEach { (start, end) ->
-//            content.setSpan(
-//                SearchSpan(),
-//                start,
-//                end,
-//                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-//            )
-//        }
-//    }
-//
-//    override fun renderSearchPosition(searchPosition: Int) {
-//        val content = tv_text_content.text as Spannable
-//
-//        val spans = content.getSpans<SearchSpan>()
-//        // clear las search position
-//        content.getSpans<SearchFocusSpan>().forEach { content.removeSpan(it) }
-//
-//        if (spans.isNotEmpty()) {
-//            //find position span
-//            val result = spans[searchPosition]
-//            Selection.setSelection(content, content.getSpanStart(result))
-//            content.setSpan(
-//                SearchFocusSpan(),
-//                content.getSpanStart(result),
-//                content.getSpanEnd(result),
-//                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-//            )
-//        }
-//    }
-//
-//    override fun clearSearchResult() {
-//        val content = tv_text_content.text as Spannable
-//        content.getSpans<SearchSpan>()
-//            .forEach { content.removeSpan(it) }
-//    }
-
     inner class ArticleBinding : Binding() {
         var isFocusedSearch: Boolean = false
         var searchQuery: String? = null
