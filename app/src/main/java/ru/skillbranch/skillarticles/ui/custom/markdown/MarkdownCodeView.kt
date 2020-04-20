@@ -18,7 +18,6 @@ import androidx.core.view.setPadding
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
-import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 
 @SuppressLint("ViewConstructor")
@@ -67,7 +66,7 @@ class MarkdownCodeView private constructor(
 
     //sizes
     private val iconSize = context.dpToIntPx(12) //12dp
-    private val radius = context.dpToPx(8) //8dp
+    private val radius = context.dpToIntPx(8) //8dp
     private val padding = context.dpToIntPx(8) //8dp
     private val fadingOffset = context.dpToIntPx(144) //144dp
     private val textExtraPadding = context.dpToIntPx(80) //80dp
@@ -96,8 +95,8 @@ class MarkdownCodeView private constructor(
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
             setTextColor(textColor)
             setPaddingOptionally(right = textExtraPadding)
-            isFocusable = true
-            isFocusableInTouchMode = true
+//            isFocusable = true
+//            isFocusableInTouchMode = true
         }
 
         sv_scroll = object : HorizontalScrollView(context) {
@@ -108,8 +107,8 @@ class MarkdownCodeView private constructor(
             overScrollMode = View.OVER_SCROLL_NEVER
             isHorizontalFadingEdgeEnabled = true
             scrollBarSize = scrollBarHeight
-            setFadingEdgeLength(fadingOffset)
-            // add code text to scroll
+//            setFadingEdgeLength(fadingOffset)
+//            // add code text to scroll
             addView(tv_codeView)
         }
 
