@@ -18,6 +18,7 @@ import androidx.core.view.setPadding
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
+import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 
 @SuppressLint("ViewConstructor")
@@ -66,7 +67,7 @@ class MarkdownCodeView private constructor(
 
     //sizes
     private val iconSize = context.dpToIntPx(12) //12dp
-    private val radius = context.dpToIntPx(8) //8dp
+    private val radius = context.dpToPx(8) //8dp
     private val padding = context.dpToIntPx(8) //8dp
     private val fadingOffset = context.dpToIntPx(144) //144dp
     private val textExtraPadding = context.dpToIntPx(80) //80dp
@@ -136,7 +137,9 @@ class MarkdownCodeView private constructor(
     constructor(
         context: Context,
         fontSize: Float,
-        code: CharSequence
+        code: CharSequence,
+        padding: Int,
+        cornerRadius: Float
     ) : this(context, fontSize) {
         codeString = code
         isSingleLine = code.lines().size == 1
@@ -154,7 +157,7 @@ class MarkdownCodeView private constructor(
         var usedHeight = 0
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
         measureChild(sv_scroll, widthMeasureSpec, heightMeasureSpec)
-        measureChild(iv_copy, widthMeasureSpec, heightMeasureSpec)
+//        measureChild(iv_copy, widthMeasureSpec, heightMeasureSpec)
 
         usedHeight += sv_scroll.measuredHeight + paddingTop + paddingBottom
         setMeasuredDimension(width, usedHeight)
@@ -163,41 +166,41 @@ class MarkdownCodeView private constructor(
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val usedHeight = paddingTop
-        val bodyWidth = r - 1 - paddingLeft - paddingRight
+        val bodyWidth = r - l - paddingLeft - paddingRight
         val left = paddingLeft
         var right = paddingLeft + bodyWidth
 
-        if (isSingleLine) {
-            val iconHeight = (b - t - iconSize) / 2
-
-            iv_copy.layout(
-                right - iconSize,
-                iconHeight,
-                right,
-                iconHeight + iconSize
-            )
-
-            iv_switch.layout(
-                iv_copy.right - (2.5f * iconSize).toInt(),
-                iconHeight,
-                iv_copy.right - (1.5f * iconSize).toInt(),
-                iconHeight + iconSize
-            )
-        } else {
-            iv_copy.layout(
-                right - iconSize,
-                usedHeight,
-                right,
-                usedHeight + iconSize
-            )
-
-            iv_switch.layout(
-                iv_copy.right - (2.5f * iconSize).toInt(),
-                usedHeight,
-                iv_copy.right - (1.5f * iconSize).toInt(),
-                usedHeight + iconSize
-            )
-        }
+//        if (isSingleLine) {
+//            val iconHeight = (b - t - iconSize) / 2
+//
+//            iv_copy.layout(
+//                right - iconSize,
+//                iconHeight,
+//                right,
+//                iconHeight + iconSize
+//            )
+//
+//            iv_switch.layout(
+//                iv_copy.right - (2.5f * iconSize).toInt(),
+//                iconHeight,
+//                iv_copy.right - (1.5f * iconSize).toInt(),
+//                iconHeight + iconSize
+//            )
+//        } else {
+//            iv_copy.layout(
+//                right - iconSize,
+//                usedHeight,
+//                right,
+//                usedHeight + iconSize
+//            )
+//
+//            iv_switch.layout(
+//                iv_copy.right - (2.5f * iconSize).toInt(),
+//                usedHeight,
+//                iv_copy.right - (1.5f * iconSize).toInt(),
+//                usedHeight + iconSize
+//            )
+//        }
 
         sv_scroll.layout(
             left,
