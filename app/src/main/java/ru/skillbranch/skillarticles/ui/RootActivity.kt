@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
 import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.R.id.search_src_text
 import ru.skillbranch.skillarticles.data.repositories.MarkdownElement
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.hideKeyboard
@@ -72,12 +71,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             else searchView.clearFocus()
         }
 
-        searchView
-            .findViewById<SearchView.SearchAutoComplete>(search_src_text)
-            .apply {
-                setTextColor(getColor(R.color.color_on_surface))
-                setHintTextColor(getColor(R.color.color_hint_on_surface))
-            }
+//        searchView
+//            .findViewById<SearchView.SearchAutoComplete>(search_src_text)
+//            .apply {
+//                setTextColor(getColor(R.color.color_on_surface))
+//                setHintTextColor(getColor(R.color.color_hint_on_surface))
+//            }
 
         menuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {

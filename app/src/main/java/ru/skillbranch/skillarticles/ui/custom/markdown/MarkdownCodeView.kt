@@ -96,8 +96,8 @@ class MarkdownCodeView private constructor(
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
             setTextColor(textColor)
             setPaddingOptionally(right = textExtraPadding)
-//            isFocusable = true
-//            isFocusableInTouchMode = true
+            isFocusable = true
+            isFocusableInTouchMode = true
         }
 
         sv_scroll = object : HorizontalScrollView(context) {
@@ -108,7 +108,7 @@ class MarkdownCodeView private constructor(
             overScrollMode = View.OVER_SCROLL_NEVER
             isHorizontalFadingEdgeEnabled = true
             scrollBarSize = scrollBarHeight
-//            setFadingEdgeLength(fadingOffset)
+            setFadingEdgeLength(fadingOffset)
 //            // add code text to scroll
             addView(tv_codeView)
         }
@@ -137,9 +137,7 @@ class MarkdownCodeView private constructor(
     constructor(
         context: Context,
         fontSize: Float,
-        code: CharSequence,
-        padding: Int,
-        cornerRadius: Float
+        code: CharSequence
     ) : this(context, fontSize) {
         codeString = code
         isSingleLine = code.lines().size == 1
@@ -157,7 +155,7 @@ class MarkdownCodeView private constructor(
         var usedHeight = 0
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
         measureChild(sv_scroll, widthMeasureSpec, heightMeasureSpec)
-//        measureChild(iv_copy, widthMeasureSpec, heightMeasureSpec)
+        measureChild(iv_copy, widthMeasureSpec, heightMeasureSpec)
 
         usedHeight += sv_scroll.measuredHeight + paddingTop + paddingBottom
         setMeasuredDimension(width, usedHeight)
@@ -170,37 +168,37 @@ class MarkdownCodeView private constructor(
         val left = paddingLeft
         var right = paddingLeft + bodyWidth
 
-//        if (isSingleLine) {
-//            val iconHeight = (b - t - iconSize) / 2
-//
-//            iv_copy.layout(
-//                right - iconSize,
-//                iconHeight,
-//                right,
-//                iconHeight + iconSize
-//            )
-//
-//            iv_switch.layout(
-//                iv_copy.right - (2.5f * iconSize).toInt(),
-//                iconHeight,
-//                iv_copy.right - (1.5f * iconSize).toInt(),
-//                iconHeight + iconSize
-//            )
-//        } else {
-//            iv_copy.layout(
-//                right - iconSize,
-//                usedHeight,
-//                right,
-//                usedHeight + iconSize
-//            )
-//
-//            iv_switch.layout(
-//                iv_copy.right - (2.5f * iconSize).toInt(),
-//                usedHeight,
-//                iv_copy.right - (1.5f * iconSize).toInt(),
-//                usedHeight + iconSize
-//            )
-//        }
+        if (isSingleLine) {
+            val iconHeight = (b - t - iconSize) / 2
+
+            iv_copy.layout(
+                right - iconSize,
+                iconHeight,
+                right,
+                iconHeight + iconSize
+            )
+
+            iv_switch.layout(
+                iv_copy.right - (2.5f * iconSize).toInt(),
+                iconHeight,
+                iv_copy.right - (1.5f * iconSize).toInt(),
+                iconHeight + iconSize
+            )
+        } else {
+            iv_copy.layout(
+                right - iconSize,
+                usedHeight,
+                right,
+                usedHeight + iconSize
+            )
+
+            iv_switch.layout(
+                iv_copy.right - (2.5f * iconSize).toInt(),
+                usedHeight,
+                iv_copy.right - (1.5f * iconSize).toInt(),
+                usedHeight + iconSize
+            )
+        }
 
         sv_scroll.layout(
             left,

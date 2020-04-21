@@ -108,9 +108,7 @@ class MarkdownContentView @JvmOverloads constructor(
                     val sv = MarkdownCodeView(
                         context,
                         textSize,
-                        it.blockCode.text,
-                        padding,
-                        padding.toFloat()
+                        it.blockCode.text
                     )
                     addView(sv)
                 }
