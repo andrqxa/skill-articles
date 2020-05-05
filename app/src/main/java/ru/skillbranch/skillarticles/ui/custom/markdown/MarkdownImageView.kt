@@ -140,11 +140,8 @@ class MarkdownImageView private constructor(
             addView(tv_alt)
 
             iv_image.setOnClickListener {
-                if (tv_alt?.isVisible == true) {
-                    animateHideAlt()
-                } else {
-                    animateShowAlt()
-                }
+                if (tv_alt?.isVisible == true) animateHideAlt()
+                else animateShowAlt()
             }
         }
     }
@@ -159,6 +156,7 @@ class MarkdownImageView private constructor(
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
 
         // create measureSpec for children EXACTLY
+        // all children width == parent width (constraint parent width)
         val ms = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
 
         iv_image.measure(ms, heightMeasureSpec)

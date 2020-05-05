@@ -50,16 +50,13 @@ object MarkdownParser {
                     )
                 )
                 else -> {
-                    if (last is MarkdownElement.Text) {
-                        last.elements.add(element)
-                    } else {
-                        acc.add(
+                    if (last is MarkdownElement.Text) last.elements.add(element)
+                    else acc.add(
                             MarkdownElement.Text(
                                 mutableListOf(element),
                                 last?.bounds?.second ?: 0
                             )
                         )
-                    }
                 }
             }
             acc
@@ -156,14 +153,14 @@ object MarkdownParser {
                     text = string.subSequence(startIndex.plus(2), endIndex)
 
                     // find inner elements
-                    val subs =
+                    val subelements =
                         findElements(
                             text
                         )
                     val element =
                         Element.Quote(
                             text,
-                            subs
+                            subelements
                         )
                     parents.add(element)
 
@@ -177,14 +174,14 @@ object MarkdownParser {
                     text = string.subSequence(startIndex.inc(), endIndex.dec())
 
                     // find inner elements
-                    val subs =
+                    val subelements =
                         findElements(
                             text
                         )
                     val element =
                         Element.Italic(
                             text,
-                            subs
+                            subelements
                         )
                     parents.add(element)
 
@@ -198,14 +195,14 @@ object MarkdownParser {
                     text = string.subSequence(startIndex.plus(2), endIndex.minus(2))
 
                     // find inner elements
-                    val subs =
+                    val subelements =
                         findElements(
                             text
                         )
                     val element =
                         Element.Bold(
                             text,
-                            subs
+                            subelements
                         )
                     parents.add(element)
 
@@ -219,14 +216,14 @@ object MarkdownParser {
                     text = string.subSequence(startIndex.plus(2), endIndex.minus(2))
 
                     // find inner elements
-                    val subs =
+                    val subelements =
                         findElements(
                             text
                         )
                     val element =
                         Element.Strike(
                             text,
-                            subs
+                            subelements
                         )
                     parents.add(element)
 
@@ -237,8 +234,7 @@ object MarkdownParser {
                 //RULE
                 7 -> {
                     //text without "***" insert empty character
-                    val element =
-                        Element.Rule()
+                    val element = Element.Rule()
                     parents.add(element)
 
                     // next find start from position "endIndex" (last regex character)
@@ -251,15 +247,11 @@ object MarkdownParser {
                     text = string.subSequence(startIndex.inc(), endIndex.dec())
 
                     // find inner elements
-                    val subs =
-                        findElements(
-                            text
-                        )
-                    val element =
-                        Element.InlineCode(
-                            text,
-                            subs
-                        )
+//                    val subs =
+//                        findElements(
+//                            text
+//                        )
+                    val element = Element.InlineCode(text)
                     parents.add(element)
 
                     // next find start from position "endIndex" (last regex character)
@@ -273,11 +265,7 @@ object MarkdownParser {
                     // find inner elements
                     val (title: String, link: String) = "\\[(.*)]\\((.*)\\)".toRegex().find(text)!!.destructured
 
-                    val element =
-                        Element.Link(
-                            link,
-                            title
-                        )
+                    val element = Element.Link(link, title)
                     parents.add(element)
 
                     // next find start from position "endIndex" (last regex character)
@@ -300,8 +288,7 @@ object MarkdownParser {
                     text =
                         string.subSequence(startIndex.plus(order.length.inc()), endIndex).toString()
 
-                    val subs =
-                        findElements(text)
+                    val subs = findElements(text)
                     val element =
                         Element.OrderedListItem(
                             order,
@@ -328,11 +315,7 @@ object MarkdownParser {
 
         if (lastStartIndex < string.length) {
             val text = string.subSequence(lastStartIndex, string.length)
-            parents.add(
-                Element.Text(
-                    text
-                )
-            )
+            parents.add(Element.Text(text))
         }
         return parents
     }
@@ -615,11 +598,8 @@ sealed class Element {
 
 private fun Element.spread(): List<Element> {
     val elements = mutableListOf<Element>()
-    if (this.elements.isNotEmpty()) {
-        elements.addAll(this.elements.spread())
-    } else {
-        elements.add(this)
-    }
+    if (this.elements.isNotEmpty()) elements.addAll(this.elements.spread())
+    else elements.add(this)
     return elements
 }
 
@@ -632,11 +612,8 @@ private fun List<Element>.spread(): List<Element> {
 private fun Element.clearContent(): String {
     return StringBuilder().apply {
         val element = this@clearContent
-        if (element.elements.isEmpty()) {
-            append(element.text)
-        } else {
-            element.elements.forEach { append(it.clearContent()) }
-        }
+        if (element.elements.isEmpty()) append(element.text)
+        else element.elements.forEach { append(it.clearContent()) }
     }.toString()
 }
 

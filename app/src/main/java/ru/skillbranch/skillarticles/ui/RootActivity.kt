@@ -59,16 +59,16 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         menuInflater.inflate(R.menu.menu_search, menu)
 
         val menuItem = menu?.findItem(R.id.action_search)
-        val searchView = menuItem?.actionView as SearchView
-        searchView.queryHint = getString(R.string.menu_search_hint)
+        val searchView = (menuItem?.actionView as? SearchView)
+        searchView?.queryHint = getString(R.string.menu_search_hint)
 
         // restore SearchView
         if (binding.isSearch) {
-            menuItem.expandActionView()
-            searchView.setQuery(binding.searchQuery, false)
+            menuItem?.expandActionView()
+            searchView?.setQuery(binding.searchQuery, false)
 
-            if (binding.isFocusedSearch) searchView.requestFocus()
-            else searchView.clearFocus()
+            if (binding.isFocusedSearch) searchView?.requestFocus()
+            else searchView?.clearFocus()
         }
 
 //        searchView
@@ -78,7 +78,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 //                setHintTextColor(getColor(R.color.color_hint_on_surface))
 //            }
 
-        menuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+        menuItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 viewModel.handleSearchMode(true)
                 return true
@@ -90,7 +90,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             }
         })
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.handleSearch(query)
                 return true
@@ -108,30 +108,40 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     override fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
             .setAnchorView(bottombar)
-            .setActionTextColor(getColor(R.color.color_accent_dark))
+//            .setActionTextColor(getColor(R.color.color_accent_dark))
 
         when(notify){
-            is Notify.TextMessage -> { /*nothing */ }
-
+//            is Notify.TextMessage -> { /*nothing */ }
+//
+//            is Notify.ActionMessage -> {
+//                snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
+//                snackbar.setAction(notify.actionLabel){
+//                    notify.actionHandler.invoke()
+//                }
+//            }
             is Notify.ActionMessage -> {
-                snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
-                snackbar.setAction(notify.actionLabel){
-                    notify.actionHandler.invoke()
+                val (_, label, handler) = notify
+                with(snackbar) {
+                    setActionTextColor(getColor(R.color.color_accent_dark))
+                    setAction(label) { handler.invoke() }
                 }
             }
 
             is Notify.ErrorMessage -> {
+                val (_, label, handler) = notify
+
                 with(snackbar){
                     setBackgroundTint(getColor(R.color.design_default_color_error))
                     setTextColor(getColor(android.R.color.white))
                     setActionTextColor(getColor(android.R.color.white))
-                    setAction(notify.errLabel){
-                        notify.errHandler?.invoke()
-                    }
+                    handler ?: return@with
+                    setAction(label) { handler.invoke() }
+//                    setAction(notify.errLabel){
+//                        notify.errHandler?.invoke()
+//                    }
                 }
             }
         }
-
         snackbar.show()
     }
 
@@ -170,8 +180,10 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val logo = if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
         logo?.scaleType = ImageView.ScaleType.CENTER_CROP
-        val lp = logo?.layoutParams as? Toolbar.LayoutParams
-        lp?.let {
+        // check toolbar imports
+//        val lp = logo?.layoutParams as? Toolbar.LayoutParams
+//        lp?.let {
+        (logo?.layoutParams as? Toolbar.LayoutParams)?.let {
             it.width = this.dpToIntPx(40)
             it.height = this.dpToIntPx(40)
             it.marginEnd = this.dpToIntPx(16)
@@ -239,10 +251,10 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             }
         }
 
-        private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList())
+        private var searchResults: List<Pair<Int, Int>> by ObserveProp(emptyList<Pair<Int, Int>>())
         private var searchPosition: Int by ObserveProp(0)
 
-        private var content: List<MarkdownElement> by ObserveProp(emptyList()) {
+        private var content: List<MarkdownElement> by ObserveProp(emptyList<MarkdownElement>()) {
             tv_text_content.isLoading = it.isEmpty()
             tv_text_content.setContent(it)
             if (it.isNotEmpty()) setupCopyListener()

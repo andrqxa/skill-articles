@@ -40,7 +40,7 @@ class MarkdownTextView constructor(
     private val searchBgHelper: SearchBgHelper
 
     init {
-        searchBgHelper = SearchBgHelper(context) { top, bottom ->
+        searchBgHelper = mockHelper ?: SearchBgHelper(context) { top, bottom ->
             focusRect.set(0, top - context.dpToIntPx(56), width, bottom + context.dpToIntPx(56))
             // show rect on view with animation
             requestRectangleOnScreen(focusRect, false)
